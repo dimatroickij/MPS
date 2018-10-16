@@ -645,7 +645,7 @@ void buttonRead(void) {
 				SaveTimer(valTimerNum, 3, uint8_t(value.substring(6, 8).toInt()));
 				SaveTimer(valTimerNum, 4, uint8_t(value.substring(9, 11).toInt()));
 				SaveTimer(valTimerNum, 5, uint8_t(value.substring(12, 13).toInt()));
-				//SaveTimer(valTimerNum, 6, uint8_t(value.substring(14).toInt()));
+				SaveTimer(valTimerNum, 6, uint8_t(value.substring(14).toInt()));
 				delay(2000);
 				Serial.println("y");
 				j = 3311;
