@@ -62,7 +62,7 @@ namespace MPS
                 for (int i = 0; i < WeekCheckedListBox.Items.Count; i++)
                 {
                     if (WeekCheckedListBox.GetItemChecked(i))
-                        z += (int)Math.Pow(2, 6 - i);
+                        week += (int)Math.Pow(2, 6 - i);
                 }
             }
             Record rec = new Record(StartTimePicker.Value, EndTimePicker.Value, RelayListBox.SelectedIndex, week);
