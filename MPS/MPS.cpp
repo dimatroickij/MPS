@@ -531,7 +531,8 @@ void buttonRead(void) {
 				j = 34;
 			}
 			if (pressedButton == NEXT) {
-				j = 33;
+				
+				j = valTimerNum >= maxTimers ? 34 :33;
 			}
 		}
 		pressedButton = 0;
@@ -563,7 +564,7 @@ void buttonRead(void) {
 				j = 31;
 			}
 			if (pressedButton == BACK) {
-				j = 33;
+				j = valTimerNum >= maxTimers ? 32 : 33;
 			}
 			if (pressedButton == NEXT) {
 				j = 32;
@@ -638,7 +639,6 @@ void buttonRead(void) {
 				String value;
 				value = Serial.readStringUntil('\n');
 				valTimerNum = FindTimer();
-
 				SaveTimer(valTimerNum, 0, 1);
 				SaveTimer(valTimerNum, 1, uint8_t(value.substring(0, 2).toInt()));
 				SaveTimer(valTimerNum, 2, uint8_t(value.substring(3, 5).toInt()));
