@@ -148,7 +148,7 @@ void loop() {
 
 //  ФУНКЦИЯ, ВЫПОЛНЯЮЩАЯ УПРАВЛЕНИЕ РЕЖИМАМИ В ЗАВИСИМОСТИ ОТ НАЖАТОЙ КНОПКИ  //
 void buttonRead(void) {
-	int j = 3000; //  Режим, в который переходит программа (3000 - остаться в том же режиме)
+	int j = 4000; //  Режим, в который переходит программа (3000 - остаться в том же режиме)
 	switch (valMode) {
 
 	case  0:  //  Главное меню
@@ -618,13 +618,18 @@ void buttonRead(void) {
 		break;
 
 	case 321: //  Меню "Передача данных на ПК"
-		if (pressedButton == OK) {
-			j = 32;
+		if (!proveConnection())
+			j = 31;
+		else {
+			if (pressedButton == OK) {
+				j = 32;
+			}
 		}
 		pressedButton = 0;
 		break;
 
 	case 331: //  Меню "Получение данных с ПК"
+
 		if (pressedButton == OK) {
 			j = 33;
 		}
@@ -640,20 +645,26 @@ void buttonRead(void) {
 				SaveTimer(valTimerNum, 3, uint8_t(value.substring(6, 8).toInt()));
 				SaveTimer(valTimerNum, 4, uint8_t(value.substring(9, 11).toInt()));
 				SaveTimer(valTimerNum, 5, uint8_t(value.substring(12, 13).toInt()));
-				SaveTimer(valTimerNum, 6, uint8_t(value.substring(14).toInt()));
-				
+				//SaveTimer(valTimerNum, 6, uint8_t(value.substring(14).toInt()));
 				delay(2000);
 				Serial.println("y");
+				j = 3311;
 			}
 		}
+
 		pressedButton = 0;
 		break;
 
+	case 3311: //  Меню "Данные сохранены"
+		delay(2000);
+		pressedButton = 0;
+		j = 33;
+		break;
 
 	}
 
 	//  Изменение текущего состояния на следующее, обновление данных на экране
-	if (j < 3000) {
+	if (j < 4000) {
 		lcd.clear();
 		flgDisplayUpdate = 1;
 		valMode = j;
@@ -754,7 +765,7 @@ void displayUpdate() {
 			SetChars(11, 15, 25, 17, 9, 21);  //  "м", "н", "ю", "т", "й", "ы"
 
 			lcd.setCursor(0, 0);
-			lcd.print(F("\1e\2\3>\4a\4\1ep\6:"));
+			lcd.print(F("\1e\2\3>\4a\5\1ep\6:"));
 
 			lcd.setCursor(0, 1);
 			lcd.print(F("< 00:00-00:00-0>"));
@@ -1168,6 +1179,15 @@ void displayUpdate() {
 			lcd.print(F("<    OTMEHA    >"));
 			break;
 
+		case 3311: //  Меню "Данные сохранены"
+			SetChars(4, 20);   // "Д", "Ы"
+
+			lcd.setCursor(0, 0);
+			lcd.print(F("     \1AHH\2E     "));
+
+			lcd.setCursor(0, 1);
+			lcd.print(F("   COXPAHEH\2    "));
+			break;
 		}
 	}
 }
