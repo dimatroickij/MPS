@@ -10,9 +10,8 @@ namespace MPS
 {
     static class ConSerialPort
     {
-        static private SerialPort sp = new SerialPort("COM7", 9600);
+        static private SerialPort sp = new SerialPort("COM5", 9600);
         static public bool connected = false;
-
 
         public static void connect()
         {
@@ -24,6 +23,7 @@ namespace MPS
                 }
                 else
                 {
+                    sp.PortName = SerialPort.GetPortNames()[0];
                     if (!sp.IsOpen)
                         sp.Open();
                     System.Threading.Thread.Sleep(1000); // just wait a lot

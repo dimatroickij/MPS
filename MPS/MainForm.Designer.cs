@@ -28,10 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             this.AddButton = new System.Windows.Forms.Button();
             this.ViewButton = new System.Windows.Forms.Button();
-            this.serialPort = new System.IO.Ports.SerialPort(this.components);
             this.connectButton = new System.Windows.Forms.Button();
             this.disconnectButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
@@ -55,10 +53,6 @@
             this.ViewButton.Text = "Полное расписание";
             this.ViewButton.UseVisualStyleBackColor = true;
             this.ViewButton.Click += new System.EventHandler(this.ViewButton_Click);
-            // 
-            // serialPort
-            // 
-            this.serialPort.PortName = "COM7";
             // 
             // connectButton
             // 
@@ -103,7 +97,6 @@
 
         private System.Windows.Forms.Button AddButton;
         private System.Windows.Forms.Button ViewButton;
-        private System.IO.Ports.SerialPort serialPort;
         private System.Windows.Forms.Button connectButton;
         private System.Windows.Forms.Button disconnectButton;
     }
