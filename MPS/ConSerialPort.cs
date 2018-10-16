@@ -69,7 +69,8 @@ namespace MPS
         {
             if (connected)
             {
-                sp.Write("s");
+                //sp.Write("s");
+                sp.Write(str);
                 string returnMessage = sp.ReadLine();
                 if (returnMessage.Contains("y"))
                     return true;

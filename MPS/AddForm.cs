@@ -17,7 +17,7 @@ namespace MPS
             InitializeComponent();
             RelayListBox.SetSelected(0, true);
             EndTimePicker.Value = DateTime.Now.AddMinutes(1);
-            
+
         }
 
         /// <summary>
@@ -57,23 +57,24 @@ namespace MPS
         private void SaveButton_Click(object sender, EventArgs e)
         {
 
-        bool[] week = new bool [7] { false, false, false, false, false, false, false };
+            bool[] week = new bool[7] { false, false, false, false, false, false, false };
             if ((WeekCheckedListBox.CheckedItems.Count != 0) && ((EndTimePicker.Value.Subtract(StartTimePicker.Value)).Ticks > 0))
             {
-                for (int i = 0; i < WeekCheckedListBox.Items.Count; i ++)
+                for (int i = 0; i < WeekCheckedListBox.Items.Count; i++)
                 {
                     if (WeekCheckedListBox.GetItemChecked(i))
                         week[i] = true;
                 }
             }
             Record rec = new Record(StartTimePicker.Value, EndTimePicker.Value, RelayListBox.SelectedIndex, week);
-            rec.SaveRecord();
-            //if (rec.SaveRecord())
-            //    if (MessageBox.Show("Данные успешно сохранены.", "Сохранение расписания", MessageBoxButtons.OK, MessageBoxIcon.Information) ==
-            //        System.Windows.Forms.DialogResult.OK)
-            //        BackButton_Click(sender, e);
-            //    else
-            //        MessageBox.Show("Возникла ошибка", "Сохранение расписания", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            if (rec.SaveRecord())
+            {
+                if (MessageBox.Show("Данные успешно сохранены.", "Сохранение расписания", MessageBoxButtons.OK, MessageBoxIcon.Information) ==
+                          System.Windows.Forms.DialogResult.OK)
+                    BackButton_Click(sender, e);
+                else
+                    MessageBox.Show("Возникла ошибка", "Сохранение расписания", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }
