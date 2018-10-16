@@ -38,7 +38,7 @@ namespace MPS
                 {
                     MessageBox.Show("Возникла ошибка подключения", "Сохранение расписания", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
-                
+
             }
             catch
             {
@@ -53,16 +53,16 @@ namespace MPS
         /// <param name="e"></param>
         private void AddButton_Click(object sender, EventArgs e)
         {
-          //  if (ConSerialPort.connected)
-         //   {
+            if (ConSerialPort.connected)
+            {
                 Form add = new AddForm();
                 add.Left = this.Left;
                 add.Top = this.Top;
                 add.Show();
                 this.Hide();
-        //    }
-        //    else
-         //       MessageBox.Show("Arduino не подключен", "Добавление расписания", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            else
+                MessageBox.Show("Arduino не подключен", "Добавление расписания", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         /// <summary>
@@ -72,16 +72,16 @@ namespace MPS
         /// <param name="e"></param>
         private void ViewButton_Click(object sender, EventArgs e)
         {
-           // if (ConSerialPort.connected)
-          //  {
-                Form view = new ViewForm();
-                view.Left = this.Left;
-                view.Top = this.Top;
-                view.Show();
-                this.Hide();
-        //    }
-         //   else
-         //       MessageBox.Show("Arduino не подключен", "Полное расписание", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            // if (ConSerialPort.connected)
+            //  {
+            Form view = new ViewForm();
+            view.Left = this.Left;
+            view.Top = this.Top;
+            view.Show();
+            this.Hide();
+            //    }
+            //   else
+            //       MessageBox.Show("Arduino не подключен", "Полное расписание", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
 

@@ -56,14 +56,13 @@ namespace MPS
         /// <param name="e"></param>
         private void SaveButton_Click(object sender, EventArgs e)
         {
-
-            bool[] week = new bool[7] { false, false, false, false, false, false, false };
+            int week = 0;
             if ((WeekCheckedListBox.CheckedItems.Count != 0) && ((EndTimePicker.Value.Subtract(StartTimePicker.Value)).Ticks > 0))
             {
                 for (int i = 0; i < WeekCheckedListBox.Items.Count; i++)
                 {
                     if (WeekCheckedListBox.GetItemChecked(i))
-                        week[i] = true;
+                        z += (int)Math.Pow(2, 6 - i);
                 }
             }
             Record rec = new Record(StartTimePicker.Value, EndTimePicker.Value, RelayListBox.SelectedIndex, week);

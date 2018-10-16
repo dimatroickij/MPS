@@ -14,9 +14,9 @@ namespace MPS
     {
         DateTime startTime, endTime;
         int numberDevice;
-        bool[] week = new bool[7];
+        int week = 0;
 
-        public Record(DateTime startTime, DateTime endTime, int numberDevice, bool[] week)
+        public Record(DateTime startTime, DateTime endTime, int numberDevice, int week)
         {
             this.StartTime = startTime;
             this.EndTime = endTime;
@@ -27,22 +27,12 @@ namespace MPS
         public DateTime StartTime { get => startTime; set => startTime = value; }
         public DateTime EndTime { get => endTime; set => endTime = value; }
         public int NumberDevice { get => numberDevice; set => numberDevice = value; }
-        public bool[] Week { get => week; set => week = value; }
+        public int Week { get => week; set => week = value; }
 
         public bool SaveRecord()
         {
             if (ConSerialPort.connected)
-            {
-                String str = "0";
-
-                foreach (bool val in this.week)
-                {
-                    str += val ? "1" : "0";
-                }
-
-                //MessageBox.Show(this.startTime.ToString("t") + "," + this.endTime.ToString("t") + "," + this.numberDevice.ToString() + "," + str, "Сохранение расписания", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return ConSerialPort.save(this.startTime.ToString("t") + "," + this.endTime.ToString("t") + "," + this.numberDevice.ToString() + "," + str + "#");
-            }
+                return ConSerialPort.save(this.startTime.ToString("t") + "," + this.endTime.ToString("t") + "," + (this.numberDevice + 1).ToString() + "," + this.week.ToString());
             else
                 return false;
         }

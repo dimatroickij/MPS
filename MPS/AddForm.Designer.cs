@@ -37,7 +37,6 @@
             this.EndTimePicker = new System.Windows.Forms.DateTimePicker();
             this.WeekCheckedListBox = new System.Windows.Forms.CheckedListBox();
             this.WeekLabel = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // SaveButton
@@ -137,21 +136,11 @@
             this.WeekLabel.TabIndex = 11;
             this.WeekLabel.Text = "Выберите дни недели";
             // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(169, 189);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(35, 13);
-            this.label2.TabIndex = 12;
-            this.label2.Text = "label2";
-            // 
             // AddForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(397, 211);
-            this.Controls.Add(this.label2);
             this.Controls.Add(this.WeekLabel);
             this.Controls.Add(this.WeekCheckedListBox);
             this.Controls.Add(this.EndTimePicker);
@@ -182,6 +171,5 @@
         private System.Windows.Forms.DateTimePicker EndTimePicker;
         private System.Windows.Forms.CheckedListBox WeekCheckedListBox;
         private System.Windows.Forms.Label WeekLabel;
-        private System.Windows.Forms.Label label2;
     }
 }
