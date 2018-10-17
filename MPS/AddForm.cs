@@ -12,6 +12,9 @@ namespace MPS
 {
     public partial class AddForm : Form
     {
+        /// <summary>
+        /// Конструктор формы
+        /// </summary>
         public AddForm()
         {
             InitializeComponent();
@@ -64,16 +67,20 @@ namespace MPS
                     if (WeekCheckedListBox.GetItemChecked(i))
                         week += (int)Math.Pow(2, 6 - i);
                 }
-            }
-            Record rec = new Record(StartTimePicker.Value, EndTimePicker.Value, RelayListBox.SelectedIndex, week);
-            if (rec.SaveRecord())
-            {
-                if (MessageBox.Show("Данные успешно сохранены.", "Сохранение расписания", MessageBoxButtons.OK, MessageBoxIcon.Information) ==
-                          System.Windows.Forms.DialogResult.OK)
-                    BackButton_Click(sender, e);
+
+                Record rec = new Record(StartTimePicker.Value, EndTimePicker.Value, RelayListBox.SelectedIndex, week);
+
+                if (rec.SaveRecord())
+                {
+                    if (MessageBox.Show("Данные успешно сохранены.", "Сохранение расписания", MessageBoxButtons.OK, MessageBoxIcon.Information) ==
+                              System.Windows.Forms.DialogResult.OK)
+                        BackButton_Click(sender, e);
+                }
                 else
-                    MessageBox.Show("Возникла ошибка", "Сохранение расписания", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Данные не были сохранены", "Сохранение расписания", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+            else
+                MessageBox.Show("Введите правильные данные", "Сохранение расписания", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 }

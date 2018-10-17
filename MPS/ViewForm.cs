@@ -25,5 +25,15 @@ namespace MPS
             main.Top = this.Top;
             main.Show();
         }
+
+        private void ViewForm_Load(object sender, EventArgs e)
+        {
+
+            for (int i = 0; i < 10; i++)
+            {
+                dataGridView1.Rows.Add();
+                dataGridView1.Rows[i].Cells[0].Value = i.ToString();
+            }
+        }
     }
 }

@@ -24,20 +24,20 @@ namespace MPS
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void connectButton_Click(object sender, EventArgs e)
+        private void ConnectButton_Click(object sender, EventArgs e)
         {
             try
             {
-                ConSerialPort.connect();
+                ConSerialPort.Connect();
                 if (ConSerialPort.connected)
                 {
                     connectButton.Enabled = false;
                     disconnectButton.Enabled = true;
                 }
-                else
-                {
-                    MessageBox.Show("Возникла ошибка подключения", "Сохранение расписания", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
+                //else
+                //{
+                //    MessageBox.Show("Возникла ошибка подключения", "Сохранение расписания", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                //}
 
             }
             catch
@@ -55,9 +55,11 @@ namespace MPS
         {
             if (ConSerialPort.connected)
             {
-                Form add = new AddForm();
-                add.Left = this.Left;
-                add.Top = this.Top;
+                Form add = new AddForm
+                {
+                    Left = this.Left,
+                    Top = this.Top
+                };
                 add.Show();
                 this.Hide();
             }
@@ -74,9 +76,11 @@ namespace MPS
         {
             // if (ConSerialPort.connected)
             //  {
-            Form view = new ViewForm();
-            view.Left = this.Left;
-            view.Top = this.Top;
+            Form view = new ViewForm
+            {
+                Left = this.Left,
+                Top = this.Top
+            };
             view.Show();
             this.Hide();
             //    }
@@ -86,9 +90,9 @@ namespace MPS
 
 
 
-        private void disconnectButton_Click(object sender, EventArgs e)
+        private void DisconnectButton_Click(object sender, EventArgs e)
         {
-            ConSerialPort.disconnect();
+            ConSerialPort.Disconnect();
             if (!ConSerialPort.connected)
             {
                 connectButton.Enabled = true;
@@ -96,7 +100,7 @@ namespace MPS
             }
             else
             {
-                MessageBox.Show("Возникла ошибка при оиключении", "Отключение Arduino", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Возникла ошибка при отключении", "Отключение Arduino", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }

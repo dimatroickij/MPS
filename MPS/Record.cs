@@ -16,6 +16,13 @@ namespace MPS
         int numberDevice;
         int week = 0;
 
+        /// <summary>
+        /// Конструктор класса
+        /// </summary>
+        /// <param name="startTime">Начальное время</param>
+        /// <param name="endTime">Конечное время</param>
+        /// <param name="numberDevice">Номер реле</param>
+        /// <param name="week">дни недели</param>
         public Record(DateTime startTime, DateTime endTime, int numberDevice, int week)
         {
             this.StartTime = startTime;
@@ -29,12 +36,20 @@ namespace MPS
         public int NumberDevice { get => numberDevice; set => numberDevice = value; }
         public int Week { get => week; set => week = value; }
 
+        /// <summary>
+        /// Сохранение записи через класс порта
+        /// </summary>
+        /// <returns></returns>
         public bool SaveRecord()
         {
             if (ConSerialPort.connected)
-                return ConSerialPort.save(this.startTime.ToString("t") + "," + this.endTime.ToString("t") + "," + (this.numberDevice + 1).ToString() + "," + this.week.ToString());
+                return ConSerialPort.Save(this.startTime.ToString("t") + "," + this.endTime.ToString("t") + "," + (this.numberDevice + 1).ToString() + "," + this.week.ToString());
             else
+            {
+                MessageBox.Show("Устройство не подключено", "Сохранение данных", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
+            }
         }
+
     }
 }

@@ -62,7 +62,7 @@
             this.connectButton.TabIndex = 2;
             this.connectButton.Text = "Подключиться к Arduino";
             this.connectButton.UseVisualStyleBackColor = true;
-            this.connectButton.Click += new System.EventHandler(this.connectButton_Click);
+            this.connectButton.Click += new System.EventHandler(this.ConnectButton_Click);
             // 
             // disconnectButton
             // 
@@ -73,7 +73,7 @@
             this.disconnectButton.TabIndex = 3;
             this.disconnectButton.Text = "Отключиться от Arduino";
             this.disconnectButton.UseVisualStyleBackColor = true;
-            this.disconnectButton.Click += new System.EventHandler(this.disconnectButton_Click);
+            this.disconnectButton.Click += new System.EventHandler(this.DisconnectButton_Click);
             // 
             // MainForm
             // 
