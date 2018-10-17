@@ -31,6 +31,15 @@ namespace MPS
             this.Week = week;
         }
 
+        public Record(String rec)
+        {
+            String[] arr = rec.Split(';');
+            this.StartTime = DateTime.Parse(arr[1]);
+            this.EndTime = DateTime.Parse(arr[2]);
+            this.NumberDevice = int.Parse(arr[3]);
+            this.week = int.Parse(arr[4]);
+        }
+
         public DateTime StartTime { get => startTime; set => startTime = value; }
         public DateTime EndTime { get => endTime; set => endTime = value; }
         public int NumberDevice { get => numberDevice; set => numberDevice = value; }
@@ -50,6 +59,5 @@ namespace MPS
                 return false;
             }
         }
-
     }
 }

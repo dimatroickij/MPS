@@ -110,18 +110,51 @@ namespace MPS
             }
         }
 
-        public static String Read()
+        /// <summary>
+        /// Чтение данных
+        /// </summary>
+        /// <returns></returns>
+        public static String[] Read()
         {
+            String[] er = new string[1];
             if (connected)
             {
-
+                int count = 0;
+                try
+                {
+                    string returnMessage = sp.ReadLine();
+                    if (returnMessage.Contains("count"))
+                    {
+                        count = int.Parse(returnMessage.Split('-')[1]);
+                        String[] str = new String[count];// = new String[count];
+                        sp.Write("r");
+                        for (int i = 0; i < count; i++)
+                        {
+                            if (sp.ReadLine().Contains("r" + i.ToString()))
+                            {
+                                str[i] = sp.ReadLine().Split('r')[1];
+                                if (i != count - 1)
+                                    sp.Write("n");
+                                else
+                                    sp.Write("e");
+                            }
+                        }
+                        return str;
+                    }
+                    else
+                        return er;
+                }
+                catch
+                {
+                    MessageBox.Show("Устройство не переведено в меню ПОЛУЧЕНИЕ ДАННЫХ", "Получение данных", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return er;
+                }
             }
             else
             {
-                MessageBox.Show("Устройство не подключено", "Сохранение данных", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false;
+                MessageBox.Show("Устройство не подключено", "Получение данных", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return er;
             }
-            return "";
         }
     }
 }

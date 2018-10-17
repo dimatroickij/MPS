@@ -625,12 +625,12 @@ void buttonRead(void) {
 			if (pressedButton == OK) {
 				j = 32;
 			}
+			Serial.println("count-" + valTimerNum);
 		}
 		pressedButton = 0;
 		break;
 
 	case 331: //  Меню "Получение данных с ПК"
-
 		if (pressedButton == OK) {
 			j = 33;
 		}
