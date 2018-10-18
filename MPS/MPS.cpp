@@ -531,7 +531,6 @@ void buttonRead(void) {
 				j = 34;
 			}
 			if (pressedButton == NEXT) {
-
 				j = valTimerNum >= maxTimers ? 34 : 33;
 			}
 		}
@@ -622,7 +621,6 @@ void buttonRead(void) {
 		if (!proveConnection())
 			j = 31;
 		else {
-
 			Serial.println("read");
 			for (int i = 0; i < FindTimer(); i++)
 			{
@@ -630,7 +628,6 @@ void buttonRead(void) {
 				s = ReadTimer(i, 1) + String(',') + ReadTimer(i, 2) + String(',') +
 					ReadTimer(i, 3) + String(',') + ReadTimer(i, 4) + String(',') + ReadTimer(i, 5) + String(',') + ReadTimer(i, 6) + String(';');
 				Serial.println(s);
-				delay(1000);
 			}
 			Serial.println("end");
 			j = 32;
@@ -1174,7 +1171,7 @@ void displayUpdate() {
 			lcd.print(F("\1EPE\2A\3A \2AHH\4X"));
 
 			lcd.setCursor(0, 1);
-			lcd.print(F("<    OTMEHA    >"));
+			lcd.print(F("      ....      "));
 			break;
 
 		case 331: //  Меню "Получение данных с ПК"
