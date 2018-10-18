@@ -90,10 +90,16 @@ namespace MPS
             {
                 try
                 {
-                    sp.Write(str);
-                    string returnMessage = sp.ReadLine();
-                    if (returnMessage.Contains("y"))
-                        return true;
+                    sp.Write("save");
+                    if (sp.ReadLine().Contains("yes"))
+                    {
+                        sp.Write(str);
+                        string returnMessage = sp.ReadLine();
+                        if (returnMessage.Contains("y"))
+                            return true;
+                        else
+                            return false;
+                    }
                     else
                         return false;
                 }
@@ -119,21 +125,27 @@ namespace MPS
             try
             {
                 String str = "";
-                String ss = sp.ReadLine();
-
-                while (!ss.Contains("end"))
+                sp.Write("read");
+                if (sp.ReadLine().Contains("yes"))
                 {
-                    if (!ss.Contains("read"))
+                    String ss = sp.ReadLine();
+
+                    while (!ss.Contains("end"))
                     {
-                        str += ss;
-                        ss = sp.ReadLine();
+                       // if (!ss.Contains("read"))
+                     //   {
+                            str += ss;
+                            ss = sp.ReadLine();
+                     //   }
+                    //    else
+                    //    {
+                   //         ss = sp.ReadLine();
+                   //     }
                     }
-                    else
-                    {
-                        ss = sp.ReadLine();
-                    }
+                    return str;
                 }
-                return str;
+                else
+                    return "";
             }
             catch
             {

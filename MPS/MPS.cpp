@@ -523,7 +523,15 @@ void buttonRead(void) {
 	case 32:    //  Меню "Работа с ПК > передача данных"
 		if (!proveConnection())
 			j = 31;
-		else {
+		else
+		{
+			if (Serial.available() > 0) {
+				if (Serial.readStringUntil('\n') == 'read')
+				{
+					j = 321;
+					Serial.println("yes");
+				}
+			}
 			if (pressedButton == OK) {
 				j = 321;
 			}
@@ -534,8 +542,9 @@ void buttonRead(void) {
 				j = valTimerNum >= maxTimers ? 34 : 33;
 			}
 		}
-		pressedButton = 0;
-		break;
+	}
+	pressedButton = 0;
+	break;
 
 	case 33:    //  Меню "Работа с ПК > получение данных"
 		if (!proveConnection())
@@ -618,20 +627,18 @@ void buttonRead(void) {
 		break;
 
 	case 321: //  Меню "Передача данных на ПК"
-		if (!proveConnection())
-			j = 31;
-		else {
-			Serial.println("read");
-			for (int i = 0; i < FindTimer(); i++)
-			{
-				String s = "";
-				s = ReadTimer(i, 1) + String(',') + ReadTimer(i, 2) + String(',') +
-					ReadTimer(i, 3) + String(',') + ReadTimer(i, 4) + String(',') + ReadTimer(i, 5) + String(',') + ReadTimer(i, 6) + String(';');
-				Serial.println(s);
-			}
-			Serial.println("end");
-			j = 32;
+
+		//Serial.println("read");
+		for (int i = 0; i < FindTimer(); i++)
+		{
+			String s = "";
+			s = ReadTimer(i, 1) + String(',') + ReadTimer(i, 2) + String(',') +
+				ReadTimer(i, 3) + String(',') + ReadTimer(i, 4) + String(',') + ReadTimer(i, 5) + String(',') + ReadTimer(i, 6) + String(';');
+			Serial.println(s);
 		}
+		Serial.println("end");
+		j = 32;
+
 		pressedButton = 0;
 		break;
 
@@ -666,14 +673,14 @@ void buttonRead(void) {
 		j = 33;
 		break;
 
-	}
+}
 
-	//  Изменение текущего состояния на следующее, обновление данных на экране
-	if (j < 4000) {
-		lcd.clear();
-		flgDisplayUpdate = 1;
-		valMode = j;
-	}
+//  Изменение текущего состояния на следующее, обновление данных на экране
+if (j < 4000) {
+	lcd.clear();
+	flgDisplayUpdate = 1;
+	valMode = j;
+}
 }
 //  ОБНОВЛЕНИЕ ИНФОРМАЦИИ НА ДИСПЛЕЕ  //
 void displayUpdate() {
