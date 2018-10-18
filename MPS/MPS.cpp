@@ -1022,7 +1022,7 @@ void displayUpdate() {
 			lcd.print(F("\1CT. COE\2\3HEH\3\4"));
 
 			lcd.setCursor(0, 1);
-			lcd.print(F("<    OTMEHA    >"));
+			lcd.print(F("      ....      "));
 			break;
 
 		case 411: //  Меню "Соединение установлено"
