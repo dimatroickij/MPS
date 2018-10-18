@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO.Ports;
+using System.Threading;
 
 namespace MPS
 {
@@ -33,12 +34,9 @@ namespace MPS
                 {
                     connectButton.Enabled = false;
                     disconnectButton.Enabled = true;
+                    Thread.Sleep(2000);
                 }
-                //else
-                //{
-                //    MessageBox.Show("Возникла ошибка подключения", "Сохранение расписания", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                //}
-
+                
             }
             catch
             {
@@ -74,18 +72,18 @@ namespace MPS
         /// <param name="e"></param>
         private void ViewButton_Click(object sender, EventArgs e)
         {
-            // if (ConSerialPort.connected)
-            //  {
-            Form view = new ViewForm
+            if (ConSerialPort.connected)
             {
-                Left = this.Left,
-                Top = this.Top
-            };
-            view.Show();
-            this.Hide();
-            //    }
-            //   else
-            //       MessageBox.Show("Arduino не подключен", "Полное расписание", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Form view = new ViewForm
+                {
+                    Left = this.Left,
+                    Top = this.Top
+                };
+                view.Show();
+                this.Hide();
+            }
+            else
+                MessageBox.Show("Arduino не подключен", "Полное расписание", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
 
@@ -102,6 +100,12 @@ namespace MPS
             {
                 MessageBox.Show("Возникла ошибка при отключении", "Отключение Arduino", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            if (ConSerialPort.connected)
+                ConSerialPort.Disconnect();
         }
     }
 }

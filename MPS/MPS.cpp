@@ -531,8 +531,8 @@ void buttonRead(void) {
 				j = 34;
 			}
 			if (pressedButton == NEXT) {
-				
-				j = valTimerNum >= maxTimers ? 34 :33;
+
+				j = valTimerNum >= maxTimers ? 34 : 33;
 			}
 		}
 		pressedButton = 0;
@@ -622,10 +622,18 @@ void buttonRead(void) {
 		if (!proveConnection())
 			j = 31;
 		else {
-			if (pressedButton == OK) {
-				j = 32;
+
+			Serial.println("read");
+			for (int i = 0; i < FindTimer(); i++)
+			{
+				String s = "";
+				s = ReadTimer(i, 1) + String(',') + ReadTimer(i, 2) + String(',') +
+					ReadTimer(i, 3) + String(',') + ReadTimer(i, 4) + String(',') + ReadTimer(i, 5) + String(',') + ReadTimer(i, 6) + String(';');
+				Serial.println(s);
+				delay(1000);
 			}
-			Serial.println("count-" + valTimerNum);
+			Serial.println("end");
+			j = 32;
 		}
 		pressedButton = 0;
 		break;

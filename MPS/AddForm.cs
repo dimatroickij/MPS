@@ -67,10 +67,7 @@ namespace MPS
                     if (WeekCheckedListBox.GetItemChecked(i))
                         week += (int)Math.Pow(2, 6 - i);
                 }
-
-                Record rec = new Record(StartTimePicker.Value, EndTimePicker.Value, RelayListBox.SelectedIndex, week);
-
-                if (rec.SaveRecord())
+                if (ConSerialPort.Save(StartTimePicker.Value.ToString("t") + "," + EndTimePicker.Value.ToString("t") + "," + (RelayListBox.SelectedIndex + 1).ToString() + "," + week.ToString()))
                 {
                     if (MessageBox.Show("Данные успешно сохранены.", "Сохранение расписания", MessageBoxButtons.OK, MessageBoxIcon.Information) ==
                               System.Windows.Forms.DialogResult.OK)
