@@ -38,6 +38,7 @@ namespace MPS
                     if (!sp.IsOpen)
                         sp.Open();
                     System.Threading.Thread.Sleep(1000); // just wait a lot
+                    sp.Write("c");
                     string returnMessage = sp.ReadLine();
                     if (returnMessage.Contains("Arduino"))
                     {
@@ -56,11 +57,10 @@ namespace MPS
             }
             catch
             {
-                MessageBox.Show("Не включён режим СОЕДИНЕНИЕ С ПК", "Подключение", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Переведите Ардуино в главное меню!", "Подключение", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 if (sp.IsOpen)
                     sp.Close();
                 connected = false;
-
             }
         }
 
@@ -86,35 +86,26 @@ namespace MPS
         /// <returns></returns>
         public static bool Save(String str)
         {
-            if (connected)
+            try
             {
-                try
-                {
-                    sp.Write("save");
-                    if (sp.ReadLine().Contains("yes"))
-                    {
-                        sp.Write(str);
-                        string returnMessage = sp.ReadLine();
-                        if (returnMessage.Contains("y"))
-                            return true;
-                        else
-                            return false;
-                    }
-                    else
-                        return false;
-                }
-                catch
-                {
-                    MessageBox.Show("На устройстве не включён режим ПОЛУЧЕНИЕ ДАННЫХ", "Сохранение данных", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                sp.Write("s");
+                sp.Write(str);
+                string returnMessage = sp.ReadLine();
+
+                if (returnMessage.Contains("endSave"))
+                    return true;
+                else
                     return false;
-                }
             }
-            else
+            catch
             {
-                MessageBox.Show("Устройство не подключено", "Сохранение данных", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Устройство не найдено", "Сохранение данных", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                sp.DiscardInBuffer();
+                sp.DiscardOutBuffer();
                 return false;
             }
         }
+
 
         /// <summary>
         /// Чтение данных
@@ -125,31 +116,31 @@ namespace MPS
             try
             {
                 String str = "";
-                sp.Write("read");
-                if (sp.ReadLine().Contains("yes"))
+                sp.Write("r");
+                if (sp.ReadLine().Contains("yesRead"))
                 {
                     String ss = sp.ReadLine();
-
-                    while (!ss.Contains("end"))
+                    while (!ss.Contains("endRead"))
                     {
-                       // if (!ss.Contains("read"))
-                     //   {
-                            str += ss;
-                            ss = sp.ReadLine();
-                     //   }
-                    //    else
-                    //    {
-                   //         ss = sp.ReadLine();
-                   //     }
+                        str += ss;
+                        ss = sp.ReadLine();
                     }
+                    sp.DiscardInBuffer();
+                    sp.DiscardOutBuffer();
                     return str;
                 }
                 else
+                {
+                    sp.DiscardInBuffer();
+                    sp.DiscardOutBuffer();
                     return "";
+                }
             }
             catch
             {
-                MessageBox.Show("Устройство не переведено в меню ПОЛУЧЕНИЕ ДАННЫХ", "Получение данных", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Устройство не найдено", "Получение данных", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                sp.DiscardInBuffer();
+                sp.DiscardOutBuffer();
                 return "";
             }
         }

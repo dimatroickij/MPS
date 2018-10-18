@@ -6,7 +6,7 @@
 #include <LiquidCrystal_I2C.h>                                       //  Подключаем библиотеку для работы с LCD дисплеем по шине I2C
 
 
-#define      OK    2
+#define		OK    2
 #define     BACK  1
 #define     NEXT  3
 
@@ -152,7 +152,14 @@ void buttonRead(void) {
 	switch (valMode) {
 
 	case  0:  //  Главное меню
+
 		if (pressedButton == OK) { j = 1; }
+		if (Serial.available() > 0)
+		{
+			char s = Serial.read();
+			if (s == 'c')
+				j = 41;
+		}
 		flgDisplayUpdate = 1;
 		pressedButton = 0;
 		break;
@@ -162,7 +169,7 @@ void buttonRead(void) {
 			j = ReadTimer() ? 11 : 12;  //  Проверка на существование хотя бы одного расписания. Если нет, то меню "Таймеры > Новый таймер"
 			valTimerNum = 0;
 		}
-		if (pressedButton == BACK) { j = 4; }
+		if (pressedButton == BACK) { j = 3; }
 		if (pressedButton == NEXT) { j = 2; }
 		pressedButton = 0;
 		break;
@@ -174,19 +181,12 @@ void buttonRead(void) {
 		pressedButton = 0;
 		break;
 
-	case 3:   //  Меню "Работа с ПК"
-		if (pressedButton == OK) { j = 31; }
-		if (pressedButton == BACK) { j = 2; }
-		if (pressedButton == NEXT) { j = 4; }
-		pressedButton = 0;
-		break;
-
-	case  4:  //  Меню "Выход"
+	case  3:  //  Меню "Выход"
 		if (pressedButton == OK) {
 			j = 0;
 			valArray[0] = valArray[1] = valArray[2] = valArray[3] = 0;
 		}
-		if (pressedButton == BACK) { j = 3; }
+		if (pressedButton == BACK) { j = 2; }
 		if (pressedButton == NEXT) { j = 1; }
 		pressedButton = 0;
 		break;
@@ -507,100 +507,24 @@ void buttonRead(void) {
 		pressedButton = 0;
 		break;
 
-	case 31:    //  Меню "Работа с ПК > установка соединения"
-		if (pressedButton == OK) {
-			j = 311;
-		}
-		if (pressedButton == BACK) {
-			j = 35;
-		}
-		if (pressedButton == NEXT) {
-			j = 35;
-		}
+	case 4:    //  Меню "Работа с ПК"
+		int z;
+		z = proveSP();
+		if (z != 4)
+			j = z;
+
+		//if (pressedButton == NEXT) {
+		//	j = valTimerNum >= maxTimers ? 34 : 33;
 		pressedButton = 0;
 		break;
 
-	case 32:    //  Меню "Работа с ПК > передача данных"
-		if (!proveConnection())
-			j = 31;
-		else
-		{
-			if (Serial.available() > 0) {
-				if (Serial.readStringUntil('\n') == 'read')
-				{
-					j = 321;
-					Serial.println("yes");
-				}
-			}
-			if (pressedButton == OK) {
-				j = 321;
-			}
-			if (pressedButton == BACK) {
-				j = 34;
-			}
-			if (pressedButton == NEXT) {
-				j = valTimerNum >= maxTimers ? 34 : 33;
-			}
-		}
-	}
-	pressedButton = 0;
-	break;
-
-	case 33:    //  Меню "Работа с ПК > получение данных"
-		if (!proveConnection())
-			j = 31;
-		else {
-			if (pressedButton == OK) {
-				j = 331;
-			}
-			if (pressedButton == BACK) {
-				j = 32;
-			}
-			if (pressedButton == NEXT) {
-				j = 34;
-			}
-		}
-		pressedButton = 0;
-		break;
-
-	case 34:    //  Меню "Работа с ПК > закрыть соединение"
-		if (!proveConnection())
-			j = 31;
-		else {
-			if (pressedButton == OK) {
-				connectPC = false;
-				j = 31;
-			}
-			if (pressedButton == BACK) {
-				j = valTimerNum >= maxTimers ? 32 : 33;
-			}
-			if (pressedButton == NEXT) {
-				j = 32;
-			}
-		}
-		pressedButton = 0;
-		break;
-
-	case 35:    //  Меню "Работа с ПК > выход"
-		if (pressedButton == OK) {
-			j = 3;
-		}
-		if (pressedButton == BACK) {
-			j = 31;
-		}
-		if (pressedButton == NEXT) {
-			j = 31;
-		}
-		pressedButton = 0;
-		break;
-
-	case 311: //  Меню "Установка соединения"
+	case 41: //  Меню "Установка соединения"
 		if (!connectPC) {
 			if (Serial.available() > 0) {
 				if (Serial.read() == 'y')
 				{
 					connectPC = true;
-					j = 312;
+					j = 411;
 				}
 				else
 				{
@@ -613,22 +537,18 @@ void buttonRead(void) {
 				connectPC = false;
 			}
 		}
-		if (pressedButton == OK) {
-			j = 31;
-			connectPC = false;
-		}
+
 		pressedButton = 0;
 		break;
 
-	case 312: //  Меню "Соединение установлено"
+	case 411: //  Меню "Соединение установлено"
 		delay(2000);
 		pressedButton = 0;
-		j = 32;
+		j = 4;
 		break;
 
-	case 321: //  Меню "Передача данных на ПК"
-
-		//Serial.println("read");
+	case 42: //  Меню "Передача данных на ПК"
+		Serial.println("yesRead");
 		for (int i = 0; i < FindTimer(); i++)
 		{
 			String s = "";
@@ -636,51 +556,46 @@ void buttonRead(void) {
 				ReadTimer(i, 3) + String(',') + ReadTimer(i, 4) + String(',') + ReadTimer(i, 5) + String(',') + ReadTimer(i, 6) + String(';');
 			Serial.println(s);
 		}
-		Serial.println("end");
-		j = 32;
+		Serial.println("endRead");
+		j = 4;
 
 		pressedButton = 0;
 		break;
 
-	case 331: //  Меню "Получение данных с ПК"
-		if (pressedButton == OK) {
-			j = 33;
-		}
-		else {
-			if (Serial.available() > 0) {
-				String value;
-				value = Serial.readStringUntil('\n');
-				valTimerNum = FindTimer();
-				SaveTimer(valTimerNum, 0, 1);
-				SaveTimer(valTimerNum, 1, uint8_t(value.substring(0, 2).toInt()));
-				SaveTimer(valTimerNum, 2, uint8_t(value.substring(3, 5).toInt()));
-				SaveTimer(valTimerNum, 3, uint8_t(value.substring(6, 8).toInt()));
-				SaveTimer(valTimerNum, 4, uint8_t(value.substring(9, 11).toInt()));
-				SaveTimer(valTimerNum, 5, uint8_t(value.substring(12, 13).toInt()));
-				SaveTimer(valTimerNum, 6, uint8_t(value.substring(14).toInt()));
-				delay(2000);
-				Serial.println("y");
-				j = 3311;
-			}
+	case 43: //  Меню "Получение данных с ПК"
+		if (Serial.available() > 0) {
+			String value;
+			value = Serial.readStringUntil('\n');
+			valTimerNum = FindTimer();
+			SaveTimer(valTimerNum, 0, 1);
+			SaveTimer(valTimerNum, 1, uint8_t(value.substring(0, 2).toInt()));
+			SaveTimer(valTimerNum, 2, uint8_t(value.substring(3, 5).toInt()));
+			SaveTimer(valTimerNum, 3, uint8_t(value.substring(6, 8).toInt()));
+			SaveTimer(valTimerNum, 4, uint8_t(value.substring(9, 11).toInt()));
+			SaveTimer(valTimerNum, 5, uint8_t(value.substring(12, 13).toInt()));
+			SaveTimer(valTimerNum, 6, uint8_t(value.substring(14).toInt()));
+
+			Serial.println("endSave");
+			j = 431;
 		}
 
 		pressedButton = 0;
 		break;
 
-	case 3311: //  Меню "Данные сохранены"
+	case 431: //  Меню "Данные сохранены"
 		delay(2000);
 		pressedButton = 0;
-		j = 33;
+		j = 4;
 		break;
 
-}
+	}
 
-//  Изменение текущего состояния на следующее, обновление данных на экране
-if (j < 4000) {
-	lcd.clear();
-	flgDisplayUpdate = 1;
-	valMode = j;
-}
+	//  Изменение текущего состояния на следующее, обновление данных на экране
+	if (j < 4000) {
+		lcd.clear();
+		flgDisplayUpdate = 1;
+		valMode = j;
+	}
 }
 //  ОБНОВЛЕНИЕ ИНФОРМАЦИИ НА ДИСПЛЕЕ  //
 void displayUpdate() {
@@ -752,18 +667,7 @@ void displayUpdate() {
 			lcd.print(F("<     \4AC\5     >"));
 			break;
 
-
-		case  3:  //  Меню "Работа с ПК"
-			SetChars(11, 15, 25, 0, 14);   // "м", "н", "ю", "Б", "П"
-
-			lcd.setCursor(0, 0);
-			lcd.print(F("\1e\2\3:"));
-
-			lcd.setCursor(0, 1);
-			lcd.print(F("< PA\4OTA C \5K  >"));
-			break;
-
-		case  4:  //  Меню "Выход"
+		case  3:  //  Меню "Выход"
 			SetChars(11, 15, 25, 4, 20);  // "м", "н", "ю", "Д", "Ы"
 
 			lcd.setCursor(0, 0);
@@ -1101,57 +1005,17 @@ void displayUpdate() {
 			lcd.blink();
 			break;
 
-		case 31:    //  Меню "Работа с ПК > соединение"
-			SetChars(11, 15, 25, 14, 4, 6);   // "м", "н", "ю", "П", "Д", "И"
+		case 4:    //  Меню "Работа с ПК"
+			SetChars(11, 15, 25, 14, 0);   // "м", "н", "ю", "П"
 
 			lcd.setCursor(0, 0);
 			lcd.print(F("\1e\2\3: \4K"));
 
 			lcd.setCursor(0, 1);
-			lcd.print(F("<  COE\5\6HEH\6E  >"));
+			lcd.print(F("  PA\5OTA C \4K   "));
 			break;
 
-		case 32:    //  Меню "Работа с ПК > передача данных"
-			SetChars(11, 15, 25, 14, 4, 6, 18);   // "м", "н", "ю", "П", "Д", "И", "Ч"
-
-			lcd.setCursor(0, 0);
-			lcd.print(F("\1e\2\3: \4K"));
-
-			lcd.setCursor(0, 1);
-			lcd.print(F("<   \4EPE\5A\7A   >"));
-			break;
-
-		case 33:    //  Меню "Работа с ПК > получение данных"
-			SetChars(6, 15, 25, 14, 12, 16, 18);   // "И", "н", "ю", "П", "Л", "У", "Ч"
-
-			lcd.setCursor(0, 0);
-			lcd.print(F("me\2\3: \4K"));
-
-			lcd.setCursor(0, 1);
-			lcd.print(F("<   \4O\5\6\7EH\1E  >"));
-			break;
-
-		case 34:    //  Меню "Работа с ПК > отключить соединение"
-			SetChars(6, 15, 25, 14, 12, 24, 18);   // "И", "н", "ю", "П", "Л", "Ю", "Ч"
-
-			lcd.setCursor(0, 0);
-			lcd.print(F("me\2\3: \4K"));
-
-			lcd.setCursor(0, 1);
-			lcd.print(F("<  OTK\5\6\7EH\1E  >"));
-			break;
-
-		case 35:    //  Меню "Работа с ПК > выход"
-			SetChars(11, 15, 25, 14, 20, 4);   // "м", "н", "ю", "П", "Ы", "Д"
-
-			lcd.setCursor(0, 0);
-			lcd.print(F("\1e\2\3: \4K"));
-
-			lcd.setCursor(0, 1);
-			lcd.print(F("<    B\5XO\6     >"));
-			break;
-
-		case 311: //  Меню "Установка соединения"
+		case 41: //  Меню "Установка соединения"
 			SetChars(16, 4, 6, 26);   // "У", "Д", "И", "Я"
 
 			lcd.setCursor(0, 0);
@@ -1161,7 +1025,7 @@ void displayUpdate() {
 			lcd.print(F("<    OTMEHA    >"));
 			break;
 
-		case 312: //  Меню "Соединение установлено"
+		case 411: //  Меню "Соединение установлено"
 			SetChars(4, 6, 16, 12);   // "Д", "И", "У", "Л"
 
 			lcd.setCursor(0, 0);
@@ -1171,7 +1035,7 @@ void displayUpdate() {
 			lcd.print(F("  \3CTAHOB\4EHO   "));
 			break;
 
-		case 321: //  Меню "Передача данных на ПК"
+		case 42: //  Меню "Передача данных на ПК"
 			SetChars(14, 4, 18, 20);   // "П", "Д", "Ч", "Ы"
 
 			lcd.setCursor(0, 0);
@@ -1181,17 +1045,17 @@ void displayUpdate() {
 			lcd.print(F("      ....      "));
 			break;
 
-		case 331: //  Меню "Получение данных с ПК"
+		case 43: //  Меню "Получение данных с ПК"
 			SetChars(14, 12, 16, 18, 6, 4, 20);   // "П", "Л", "У", "Ч", "И", "Д", "Ы"
 
 			lcd.setCursor(0, 0);
 			lcd.print(F("\1O\2\3\4EH\5E \6AHH\7X"));
 
 			lcd.setCursor(0, 1);
-			lcd.print(F("<    OTMEHA    >"));
+			lcd.print(F("      ....      "));
 			break;
 
-		case 3311: //  Меню "Данные сохранены"
+		case 431: //  Меню "Данные сохранены"
 			SetChars(4, 20);   // "Д", "Ы"
 
 			lcd.setCursor(0, 0);
@@ -1393,20 +1257,32 @@ void viewEEPROM() {
 	delay(500);
 }
 
-bool proveConnection() {
+int proveSP()
+{
 	if (connectPC) {
-		if (Serial.available() > 0) {
-			if (Serial.read() == 'e')
-			{
-				connectPC = false;
-				return false;
-			}
-			else
-				return true;
+		char s = Serial.read();
+		switch (s) {
+
+			//	exit - выход из режима работы с ардуино
+		case 'e':
+			connectPC = false;
+			return 0;
+			break;
+
+			// read - переход в режим чтения данных с ардуино 
+		case 'r':
+			return 42;
+			break;
+
+			// save - переход в режим сохранения данных с ПК
+		case 's':
+			return 43;
+			break;
+		default:
+			return 4;
 		}
-		else
-			return true;
 	}
 	else
-		return true;
+		return 0;
 }
+
