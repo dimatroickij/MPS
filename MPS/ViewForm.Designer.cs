@@ -41,6 +41,8 @@
             this.weekSunday = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.editRecord = new System.Windows.Forms.DataGridViewButtonColumn();
             this.deleteRecord = new System.Windows.Forms.DataGridViewButtonColumn();
+            this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
             this.SuspendLayout();
             // 
@@ -67,17 +69,20 @@
             this.weekSunday,
             this.editRecord,
             this.deleteRecord});
+            this.dataGridView.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.dataGridView.Location = new System.Drawing.Point(12, 12);
             this.dataGridView.Name = "dataGridView";
             this.dataGridView.ReadOnly = true;
-            this.dataGridView.Size = new System.Drawing.Size(1044, 443);
+            this.dataGridView.Size = new System.Drawing.Size(1244, 443);
             this.dataGridView.TabIndex = 0;
+            this.dataGridView.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView_CellContentClick);
             // 
             // startTime
             // 
             this.startTime.HeaderText = "Начальное время";
             this.startTime.Name = "startTime";
             this.startTime.ReadOnly = true;
+            this.startTime.Resizable = System.Windows.Forms.DataGridViewTriState.True;
             // 
             // EndTime
             // 
@@ -96,6 +101,7 @@
             this.weekMonday.HeaderText = "Понедельник";
             this.weekMonday.Name = "weekMonday";
             this.weekMonday.ReadOnly = true;
+            this.weekMonday.TrueValue = "";
             // 
             // weekTuesday
             // 
@@ -148,12 +154,22 @@
             this.deleteRecord.Name = "deleteRecord";
             this.deleteRecord.ReadOnly = true;
             this.deleteRecord.Text = "Удалить";
+            //
+            // dataGridViewTextBoxColumn1
+            // 
+            this.dataGridViewTextBoxColumn1.HeaderText = "Конечное время";
+            this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
+            // 
+            // dataGridViewTextBoxColumn2
+            // 
+            this.dataGridViewTextBoxColumn2.HeaderText = "Номер реле";
+            this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
             // 
             // ViewForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1067, 465);
+            this.ClientSize = new System.Drawing.Size(1267, 465);
             this.Controls.Add(this.dataGridView);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
@@ -182,5 +198,7 @@
         private System.Windows.Forms.DataGridViewCheckBoxColumn weekSunday;
         private System.Windows.Forms.DataGridViewButtonColumn editRecord;
         private System.Windows.Forms.DataGridViewButtonColumn deleteRecord;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
     }
 }

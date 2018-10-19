@@ -45,15 +45,69 @@ namespace MPS
                 dataGridView.Rows[i].Cells[1].Value = record[2] + ":" + record[3];
                 dataGridView.Rows[i].Cells[2].Value = record[4];
                 int z = 0;
-                for (int j = dataGridView.Rows[i].Cells.Count - 2 - week.Length; j < dataGridView.Rows[i].Cells.Count - 2; j++)
+                for (int j = 3; j < dataGridView.Rows[i].Cells.Count - 2; j++)
                 {
+                    if (j >= dataGridView.Rows[i].Cells.Count - 2 - week.Length)
+                    {
 
-                    dataGridView.Rows[i].Cells[j].Value = week[z] == '1' ? true : false;
-                    z++;
+                        dataGridView.Rows[i].Cells[j].Value = week[z] == '1' ? true : false;
+                        z++;
+                    }
+                    else
+                        dataGridView.Rows[i].Cells[j].Value = false;
+                    
                 }
+                dataGridView.Rows[i].Cells[10].Value = "Изменить";
+                dataGridView.Rows[i].Cells[11].Value = "Удалить";
             }
             dataGridView.ColumnHeadersDefaultCellStyle.Alignment = dataGridView.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+        }
 
+        private void dataGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            switch (e.ColumnIndex)
+            {
+
+                case 10:
+                    String str = "";
+                    DataGridViewRow row = dataGridView.Rows[e.RowIndex];
+                    //row.ReadOnly = false;
+                    str += e.RowIndex.ToString();
+                    for (int i = 0; i < row.Cells.Count - 9; i++)
+                    {
+                        str += "," + row.Cells[i].Value;
+                    }
+
+                    int week = 0;
+
+                    for (int i = 3; i < row.Cells.Count - 2; i++)
+                    {
+                        if ((bool)row.Cells[i].Value)
+                            week += (int)Math.Pow(2, 9 - i);
+                        //str += "," + row.Cells[i].Value;
+                    }
+
+                    str += "," + week.ToString();
+                    
+                    //if (true)// (ConSerialPort.Edit(""))
+                    //    MessageBox.Show(str, "Полное расписание", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    //else
+                    //    MessageBox.Show("Возникла ошибка при изменении", "Полное расписание", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    break;
+
+                case 11:
+                    if (ConSerialPort.Delete(e.RowIndex.ToString()))
+                    {
+                        dataGridView.Rows.RemoveAt(e.RowIndex);
+                        MessageBox.Show("Расписание удалено", "Полное расписание", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    else
+                        MessageBox.Show("Возникла ошибка при удалении", "Полное расписание", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    break;
+
+                default:
+                    break;
+            }
         }
     }
 }

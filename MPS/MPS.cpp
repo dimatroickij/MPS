@@ -384,12 +384,8 @@ void buttonRead(void) {
 		}
 
 		//  Сдвиг следующих расписаний на 7 байт назад
-		for (int k = valArray[0]; k < valArray[1]; k++) {
-			for (uint8_t l = 0; l < 7; l++) {
-				SaveTimer(k, l, ReadTimer(k + 1, l));
-			}
-		}
-		SaveTimer(valArray[1]);
+		shift();
+
 		delay(2000);
 		pressedButton = 0;
 		break;
@@ -585,14 +581,37 @@ void buttonRead(void) {
 		pressedButton = 0;
 		j = 4;
 		break;
+
 	case 44:	// Меню "Изменение данных расписания"
+
 		pressedButton = 0;
 		break;
 
 	case 45:	// Меню "Удаление расписания"
+		if (Serial.available() > 0)
+		{
+			String value;
+			value = Serial.readStringUntil('\n');
+			valArray[0] = value.toInt();
+			valArray[1] = FindTimer() - 1;
+			shift();
+			valArray[0] = valArray[1] = 0;
+			Serial.println("endDelete");
+			j = 451;
+		}
+
 		pressedButton = 0;
 		break;
+
+	case 451: //  Меню "Данные удалены"
+		delay(2000);
+		pressedButton = 0;
+		j = 4;
+		break;
+
 	}
+
+
 
 	//  Изменение текущего состояния на следующее, обновление данных на экране
 	if (j < 4000) {
@@ -1068,7 +1087,7 @@ void displayUpdate() {
 			lcd.setCursor(0, 1);
 			lcd.print(F("   COXPAHEH\2    "));
 			break;
-	
+
 		case 44:	// Меню "Изменение данных расписания"
 			SetChars(6, 7, 4, 20);   // "И", "З", "Д", "Ы"
 
@@ -1079,6 +1098,17 @@ void displayUpdate() {
 			lcd.print(F("      ....      "));
 			break;
 
+		case 441: //  Меню "Данные изменены"
+			SetChars(4, 20, 6, 7);   // "Д", "Ы", "И", "З"
+
+			lcd.setCursor(0, 0);
+			lcd.print(F("     \1AHH\2E     "));
+
+			lcd.setCursor(0, 1);
+			lcd.print(F("    \3\4MEHEH\2    "));
+			break;
+
+
 		case 45:	// Меню "Удаление расписания"
 			SetChars(16, 4, 12, 6, 20);   // "У", "Д", "З", "Д", "Ы"
 
@@ -1087,6 +1117,16 @@ void displayUpdate() {
 
 			lcd.setCursor(0, 1);
 			lcd.print(F("      ....      "));
+			break;
+
+		case 451: //  Меню "Данные удалены"
+			SetChars(4, 20, 16, 12);   // "Д", "Ы", "У", "Л"
+
+			lcd.setCursor(0, 0);
+			lcd.print(F("     \1AHH\2E     "));
+
+			lcd.setCursor(0, 1);
+			lcd.print(F("    \3\1A\4EH\2     "));
 			break;
 		}
 	}
@@ -1264,6 +1304,16 @@ void proveVoltage() {
 		tone(buzzer, 2500, 1000);
 	}
 
+}
+
+void shift()
+{
+	for (int k = valArray[0]; k < valArray[1]; k++) {
+		for (uint8_t l = 0; l < 7; l++) {
+			SaveTimer(k, l, ReadTimer(k + 1, l));
+		}
+	}
+	SaveTimer(valArray[1]);
 }
 
 void viewEEPROM() {

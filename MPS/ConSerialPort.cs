@@ -106,7 +106,7 @@ namespace MPS
                 {
                     sp.DiscardInBuffer();
                     sp.DiscardOutBuffer();
-                    saveTimer ++;
+                    saveTimer++;
                     return true;
                 }
                 else
@@ -161,6 +161,31 @@ namespace MPS
                 sp.DiscardInBuffer();
                 sp.DiscardOutBuffer();
                 return "";
+            }
+        }
+
+        public static bool Edit(String str)
+        {
+            return true;
+        }
+
+        public static bool Delete(String str)
+        {
+            try
+            {
+                sp.Write("d");
+                sp.Write(str);
+                if (sp.ReadLine().Contains("endDelete"))
+                {
+                    saveTimer--;
+                    return true;
+                }
+                else
+                    return false;
+            }
+            catch
+            {
+                return false;
             }
         }
     }
