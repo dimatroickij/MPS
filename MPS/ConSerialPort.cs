@@ -80,7 +80,7 @@ namespace MPS
         {
             if (sp.IsOpen)
             {
-                sp.Write("e");
+                sp.Write("t");
                 sp.DiscardInBuffer();
                 sp.DiscardOutBuffer();
                 sp.Close();

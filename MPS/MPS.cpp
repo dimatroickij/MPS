@@ -585,7 +585,13 @@ void buttonRead(void) {
 		pressedButton = 0;
 		j = 4;
 		break;
+	case 44:	// Меню "Изменение данных расписания"
+		pressedButton = 0;
+		break;
 
+	case 45:	// Меню "Удаление расписания"
+		pressedButton = 0;
+		break;
 	}
 
 	//  Изменение текущего состояния на следующее, обновление данных на экране
@@ -1013,7 +1019,7 @@ void displayUpdate() {
 			lcd.print(F("  PA\5OTA C \4K   "));
 			break;
 
-		case 41: //  Меню "Установка соединения"
+		case 41:	//  Меню "Установка соединения"
 			SetChars(16, 4, 6, 26);   // "У", "Д", "И", "Я"
 
 			lcd.setCursor(0, 0);
@@ -1023,7 +1029,7 @@ void displayUpdate() {
 			lcd.print(F("      ....      "));
 			break;
 
-		case 411: //  Меню "Соединение установлено"
+		case 411:	//  Меню "Соединение установлено"
 			SetChars(4, 6, 16, 12);   // "Д", "И", "У", "Л"
 
 			lcd.setCursor(0, 0);
@@ -1033,7 +1039,7 @@ void displayUpdate() {
 			lcd.print(F("  \3CTAHOB\4EHO   "));
 			break;
 
-		case 42: //  Меню "Передача данных на ПК"
+		case 42:	//  Меню "Передача данных на ПК"
 			SetChars(14, 4, 18, 20);   // "П", "Д", "Ч", "Ы"
 
 			lcd.setCursor(0, 0);
@@ -1043,7 +1049,7 @@ void displayUpdate() {
 			lcd.print(F("      ....      "));
 			break;
 
-		case 43: //  Меню "Получение данных с ПК"
+		case 43:	//  Меню "Получение данных с ПК"
 			SetChars(14, 12, 16, 18, 6, 4, 20);   // "П", "Л", "У", "Ч", "И", "Д", "Ы"
 
 			lcd.setCursor(0, 0);
@@ -1053,7 +1059,7 @@ void displayUpdate() {
 			lcd.print(F("      ....      "));
 			break;
 
-		case 431: //  Меню "Данные сохранены"
+		case 431:	//  Меню "Данные сохранены"
 			SetChars(4, 20);   // "Д", "Ы"
 
 			lcd.setCursor(0, 0);
@@ -1061,6 +1067,26 @@ void displayUpdate() {
 
 			lcd.setCursor(0, 1);
 			lcd.print(F("   COXPAHEH\2    "));
+			break;
+	
+		case 44:	// Меню "Изменение данных расписания"
+			SetChars(6, 7, 4, 20);   // "И", "З", "Д", "Ы"
+
+			lcd.setCursor(0, 0);
+			lcd.print(F("\1\2MEHEH\1E \3AHH\4X"));
+
+			lcd.setCursor(0, 1);
+			lcd.print(F("      ....      "));
+			break;
+
+		case 45:	// Меню "Удаление расписания"
+			SetChars(16, 4, 12, 6, 20);   // "У", "Д", "З", "Д", "Ы"
+
+			lcd.setCursor(0, 0);
+			lcd.print(F("\1\2A\3EH\4E  \2AHH\5X"));
+
+			lcd.setCursor(0, 1);
+			lcd.print(F("      ....      "));
 			break;
 		}
 	}
@@ -1261,8 +1287,8 @@ int proveSP()
 		char s = Serial.read();
 		switch (s) {
 
-			//  exit - выход из режима работы с ардуино
-		case 'e':
+			//  turn off - отсоединение ардуино
+		case 't':
 			connectPC = false;
 			return 0;
 			break;
@@ -1276,6 +1302,17 @@ int proveSP()
 		case 's':
 			return 43;
 			break;
+
+			// edit - Изменение данных расписания
+		case 'e':
+			return 44;
+			break;
+
+			// delete - удаление расписания
+		case 'd':
+			return 45;
+			break;
+
 		default:
 			return 4;
 		}
