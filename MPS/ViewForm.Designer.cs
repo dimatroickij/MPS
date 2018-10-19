@@ -39,6 +39,8 @@
             this.weekFriday = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.weekSaturday = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.weekSunday = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.editRecord = new System.Windows.Forms.DataGridViewButtonColumn();
+            this.deleteRecord = new System.Windows.Forms.DataGridViewButtonColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
             this.SuspendLayout();
             // 
@@ -62,7 +64,9 @@
             this.weekThursday,
             this.weekFriday,
             this.weekSaturday,
-            this.weekSunday});
+            this.weekSunday,
+            this.editRecord,
+            this.deleteRecord});
             this.dataGridView.Location = new System.Drawing.Point(12, 12);
             this.dataGridView.Name = "dataGridView";
             this.dataGridView.ReadOnly = true;
@@ -131,6 +135,20 @@
             this.weekSunday.Name = "weekSunday";
             this.weekSunday.ReadOnly = true;
             // 
+            // editRecord
+            // 
+            this.editRecord.HeaderText = "Изменение";
+            this.editRecord.Name = "editRecord";
+            this.editRecord.ReadOnly = true;
+            this.editRecord.Text = "Изменить";
+            // 
+            // deleteRecord
+            // 
+            this.deleteRecord.HeaderText = "Удаление";
+            this.deleteRecord.Name = "deleteRecord";
+            this.deleteRecord.ReadOnly = true;
+            this.deleteRecord.Text = "Удалить";
+            // 
             // ViewForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -144,7 +162,6 @@
             this.Text = "Полное расписание";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.ViewForm_FormClosed);
             this.Load += new System.EventHandler(this.ViewForm_Load);
-            this.Shown += new System.EventHandler(this.ViewForm_Shown);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).EndInit();
             this.ResumeLayout(false);
 
@@ -163,5 +180,7 @@
         private System.Windows.Forms.DataGridViewCheckBoxColumn weekFriday;
         private System.Windows.Forms.DataGridViewCheckBoxColumn weekSaturday;
         private System.Windows.Forms.DataGridViewCheckBoxColumn weekSunday;
+        private System.Windows.Forms.DataGridViewButtonColumn editRecord;
+        private System.Windows.Forms.DataGridViewButtonColumn deleteRecord;
     }
 }

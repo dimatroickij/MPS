@@ -12,6 +12,8 @@ namespace MPS
     {
         static private SerialPort sp = new SerialPort("COM5", 9600);
         static public bool connected = false;
+        static public int saveTimer = 0;
+        static public int maxTimers = 0;
 
         /// <summary>
         /// Констуктор - установка timeout для получения данных от ардуино
@@ -37,18 +39,23 @@ namespace MPS
                     sp.PortName = SerialPort.GetPortNames()[0];
                     if (!sp.IsOpen)
                         sp.Open();
-                    System.Threading.Thread.Sleep(1000); // just wait a lot
+                    //System.Threading.Thread.Sleep(1000); // just wait a lot
                     sp.Write("c");
                     string returnMessage = sp.ReadLine();
                     if (returnMessage.Contains("Arduino"))
                     {
                         sp.Write("y");
+                        String[] timers = sp.ReadLine().Split(',');
+                        saveTimer = int.Parse(timers[0]);
+                        maxTimers = int.Parse(timers[1]);
                         connected = true;
                         sp.DiscardInBuffer();
                         sp.DiscardOutBuffer();
                     }
                     else
                     {
+                        sp.DiscardInBuffer();
+                        sp.DiscardOutBuffer();
                         if (sp.IsOpen)
                             sp.Close();
                         connected = false;
@@ -58,6 +65,8 @@ namespace MPS
             catch
             {
                 MessageBox.Show("Переведите Ардуино в главное меню!", "Подключение", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                sp.DiscardInBuffer();
+                sp.DiscardOutBuffer();
                 if (sp.IsOpen)
                     sp.Close();
                 connected = false;
@@ -76,6 +85,7 @@ namespace MPS
                 sp.DiscardOutBuffer();
                 sp.Close();
             }
+            saveTimer = maxTimers = 0;
             connected = false;
         }
 
@@ -93,9 +103,18 @@ namespace MPS
                 string returnMessage = sp.ReadLine();
 
                 if (returnMessage.Contains("endSave"))
+                {
+                    sp.DiscardInBuffer();
+                    sp.DiscardOutBuffer();
+                    saveTimer ++;
                     return true;
+                }
                 else
+                {
+                    sp.DiscardInBuffer();
+                    sp.DiscardOutBuffer();
                     return false;
+                }
             }
             catch
             {

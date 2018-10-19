@@ -79,7 +79,10 @@ namespace MPS
                         BackButton_Click(sender, e);
                 }
                 else
-                    MessageBox.Show("Данные не были сохранены", "Сохранение расписания", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                {
+                    MessageBox.Show("Возникла ошибка", "Сохранение расписания", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    BackButton_Click(sender, e);
+                }
             }
             else
                 MessageBox.Show("Введите правильные данные", "Сохранение расписания", MessageBoxButtons.OK, MessageBoxIcon.Error);

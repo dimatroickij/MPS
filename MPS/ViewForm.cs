@@ -32,11 +32,12 @@ namespace MPS
 
             for (int i = 0; i < str.Length - 1; i++)
             {
+                str[i] = str[i].Trim();
                 String[] record = str[i].Split(',');
                 dataGridView.Rows.Add();
                 for (int j = 0; j < 4; j++)
                 {
-                    if (record[j].Length == 1)
+                    if (record[j].Length != 2)
                         record[j] = "0" + record[j];
                 }
                 var week = Convert.ToString(int.Parse(record[5]), 2).ToArray();
@@ -44,7 +45,7 @@ namespace MPS
                 dataGridView.Rows[i].Cells[1].Value = record[2] + ":" + record[3];
                 dataGridView.Rows[i].Cells[2].Value = record[4];
                 int z = 0;
-                for (int j = dataGridView.Rows[i].Cells.Count - week.Length; j < dataGridView.Rows[i].Cells.Count; j++)
+                for (int j = dataGridView.Rows[i].Cells.Count - 2 - week.Length; j < dataGridView.Rows[i].Cells.Count - 2; j++)
                 {
 
                     dataGridView.Rows[i].Cells[j].Value = week[z] == '1' ? true : false;
@@ -52,21 +53,6 @@ namespace MPS
                 }
             }
             dataGridView.ColumnHeadersDefaultCellStyle.Alignment = dataGridView.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-
-        }
-
-        private void ViewForm_Shown(object sender, EventArgs e)
-        {
-            if (dataGridView.Rows.Count == 0)
-            {
-                Form main = Application.OpenForms[0];
-                main.StartPosition = FormStartPosition.Manual;
-                main.Left = this.Left;
-                main.Top = this.Top;
-
-                main.Show();
-                this.Close();
-            }
 
         }
     }

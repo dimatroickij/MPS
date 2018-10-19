@@ -6,7 +6,7 @@
 #include <LiquidCrystal_I2C.h>                                       //  Подключаем библиотеку для работы с LCD дисплеем по шине I2C
 
 
-#define		OK    2
+#define    OK    2
 #define     BACK  1
 #define     NEXT  3
 
@@ -42,7 +42,7 @@ const byte      rusMem[40][8] PROGMEM = {
   { 14, 2, 14, 8, 14, 0, 0, 0 }, { 14, 2, 14, 2, 14, 0, 0, 0 },     //  2, 3 № матрицы символа в массиве: 36, 37
   { 18, 18, 18, 18, 18, 18, 31, 1 }, {17, 17, 19, 13, 1, 17, 14, 0} };  //  Ц, У № матрицы символа в массиве: 38, 39
 
-const int maxTimers = 20;           //  Максимальное количество расписаний (максимум 146)
+const int maxTimers = 145;           //  Максимальное количество расписаний (максимум 145)
 int     pressedButton = 0;          //  Нажатая кнопка
 uint8_t   valArray[7] = { 0,0,0,0,0,0,0 };  //  Определяем массив элементы которого будут хранить различную информацию в зависимости от режима
 char    valChar[5] = "    ";        //  Определяем массив символов (строку) информация которой будет отображаться на дисплее мигая
@@ -512,9 +512,6 @@ void buttonRead(void) {
 		z = proveSP();
 		if (z != 4)
 			j = z;
-
-		//if (pressedButton == NEXT) {
-		//	j = valTimerNum >= maxTimers ? 34 : 33;
 		pressedButton = 0;
 		break;
 
@@ -523,6 +520,7 @@ void buttonRead(void) {
 			if (Serial.available() > 0) {
 				if (Serial.read() == 'y')
 				{
+					Serial.println(String(FindTimer()) + "," + String(maxTimers));
 					connectPC = true;
 					j = 411;
 				}
@@ -567,6 +565,7 @@ void buttonRead(void) {
 			String value;
 			value = Serial.readStringUntil('\n');
 			valTimerNum = FindTimer();
+
 			SaveTimer(valTimerNum, 0, 1);
 			SaveTimer(valTimerNum, 1, uint8_t(value.substring(0, 2).toInt()));
 			SaveTimer(valTimerNum, 2, uint8_t(value.substring(3, 5).toInt()));
@@ -574,7 +573,6 @@ void buttonRead(void) {
 			SaveTimer(valTimerNum, 4, uint8_t(value.substring(9, 11).toInt()));
 			SaveTimer(valTimerNum, 5, uint8_t(value.substring(12, 13).toInt()));
 			SaveTimer(valTimerNum, 6, uint8_t(value.substring(14).toInt()));
-
 			Serial.println("endSave");
 			j = 431;
 		}
@@ -1263,7 +1261,7 @@ int proveSP()
 		char s = Serial.read();
 		switch (s) {
 
-			//	exit - выход из режима работы с ардуино
+			//  exit - выход из режима работы с ардуино
 		case 'e':
 			connectPC = false;
 			return 0;
@@ -1285,4 +1283,3 @@ int proveSP()
 	else
 		return 0;
 }
-

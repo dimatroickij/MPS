@@ -36,7 +36,7 @@ namespace MPS
                     disconnectButton.Enabled = true;
                     Thread.Sleep(2000);
                 }
-                
+
             }
             catch
             {
@@ -53,13 +53,18 @@ namespace MPS
         {
             if (ConSerialPort.connected)
             {
-                Form add = new AddForm
+                if (ConSerialPort.saveTimer < ConSerialPort.maxTimers)
                 {
-                    Left = this.Left,
-                    Top = this.Top
-                };
-                add.Show();
-                this.Hide();
+                    Form add = new AddForm
+                    {
+                        Left = this.Left,
+                        Top = this.Top
+                    };
+                    add.Show();
+                    this.Hide();
+                }
+                else
+                    MessageBox.Show("Достигнуто максимальное количество расписаний", "Добавление расписания", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             else
                 MessageBox.Show("Arduino не подключен", "Добавление расписания", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -74,13 +79,19 @@ namespace MPS
         {
             if (ConSerialPort.connected)
             {
-                Form view = new ViewForm
+                if (ConSerialPort.saveTimer != 0)
                 {
-                    Left = this.Left,
-                    Top = this.Top
-                };
-                view.Show();
-                this.Hide();
+                    Form view = new ViewForm
+                    {
+                        Left = this.Left,
+                        Top = this.Top
+                    };
+                    view.Show();
+                    this.Hide();
+                }
+                else
+                    MessageBox.Show("Нет сохранённых расписаний", "Полное расписание", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
             }
             else
                 MessageBox.Show("Arduino не подключен", "Полное расписание", MessageBoxButtons.OK, MessageBoxIcon.Error);
