@@ -1,6 +1,6 @@
 ﻿namespace MPS
 {
-    partial class ViewForm
+    partial class WorkForm
     {
         /// <summary>
         /// Required designer variable.
@@ -188,7 +188,7 @@
             this.AddButton.UseVisualStyleBackColor = true;
             this.AddButton.Click += new System.EventHandler(this.AddButton_Click);
             // 
-            // ViewForm
+            // WorkForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -197,8 +197,8 @@
             this.Controls.Add(this.dataGridView);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
-            this.Name = "ViewForm";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
+            this.Name = "WorkForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Полное расписание";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.ViewForm_FormClosed);
             this.Load += new System.EventHandler(this.ViewForm_Load);

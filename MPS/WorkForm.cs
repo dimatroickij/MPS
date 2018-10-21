@@ -5,26 +5,27 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace MPS
 {
-    public partial class ViewForm : Form
+    public partial class WorkForm : Form
     {
         List<Record> records = new List<Record>();
-        public ViewForm()
+        public WorkForm()
         {
             InitializeComponent();
         }
 
         private void ViewForm_FormClosed(object sender, FormClosedEventArgs e)
         {
+            if (ConSerialPort.connected)
+                ConSerialPort.Disconnect();
             Form main = Application.OpenForms[0];
-            main.StartPosition = FormStartPosition.Manual;
-            main.Left = this.Left;
-            main.Top = this.Top;
-            main.Show();
+            main.Close();
+
         }
 
         private void ViewForm_Load(object sender, EventArgs e)
@@ -64,6 +65,9 @@ namespace MPS
                 dataGridView.Rows[i].ReadOnly = true;
             }
             dataGridView.ColumnHeadersDefaultCellStyle.Alignment = dataGridView.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+
+            if (ConSerialPort.saveTimer > ConSerialPort.maxTimers)
+                AddButton.Enabled = false;
         }
 
         private int GetWeek(DataGridViewRow r)
@@ -119,7 +123,7 @@ namespace MPS
 
                             case "Добавить":
                                 String str = "";
-                                
+
                                 DateTime[] datetimes = new DateTime[2];
                                 datetimes[0] = (DateTime)row.Cells[0].Value;
                                 datetimes[1] = (DateTime)row.Cells[1].Value;
@@ -138,7 +142,8 @@ namespace MPS
                                         row.Cells[10].Value = "Изменить";
                                         row.Cells[11].Value = "Удалить";
                                         row.ReadOnly = true;
-                                        
+                                        if (ConSerialPort.saveTimer > ConSerialPort.maxTimers)
+                                            AddButton.Enabled = false;
                                     }
                                     else
                                         MessageBox.Show("Возникла ошибка при изменении", "Полное расписание", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -188,6 +193,7 @@ namespace MPS
                                 {
                                     dataGridView.Rows.RemoveAt(e.RowIndex);
                                     MessageBox.Show("Расписание удалено", "Полное расписание", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                    AddButton.Enabled = true;
                                 }
                                 else
                                     MessageBox.Show("Возникла ошибка при удалении", "Полное расписание", MessageBoxButtons.OK, MessageBoxIcon.Error);
