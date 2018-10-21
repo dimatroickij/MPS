@@ -125,6 +125,43 @@ namespace MPS
             }
         }
 
+        /// <summary>
+        /// Изменение данных
+        /// </summary>
+        /// <param name="str">Строка, содержащая новые данные</param>
+        /// <returns></returns>
+        public static bool Edit(String str)
+        {
+            try
+            {
+                sp.Write("e");
+                sp.Write(str);
+                string returnMessage = sp.ReadLine();
+
+                if (returnMessage.Contains("endEdit"))
+                {
+                    sp.DiscardInBuffer();
+                    sp.DiscardOutBuffer();
+                    
+                    return true;
+                }
+                else
+                {
+                    sp.DiscardInBuffer();
+                    sp.DiscardOutBuffer();
+                    return false;
+                }
+            }
+            catch
+            {
+                MessageBox.Show("Устройство не найдено", "Сохранение данных", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                sp.DiscardInBuffer();
+                sp.DiscardOutBuffer();
+                return false;
+            }
+        }
+
+
 
         /// <summary>
         /// Чтение данных
@@ -164,10 +201,7 @@ namespace MPS
             }
         }
 
-        public static bool Edit(String str)
-        {
-            return true;
-        }
+        
 
         public static bool Delete(String str)
         {
