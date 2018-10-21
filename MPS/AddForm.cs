@@ -60,6 +60,7 @@ namespace MPS
         private void SaveButton_Click(object sender, EventArgs e)
         {
             int week = 0;
+
             if ((WeekCheckedListBox.CheckedItems.Count != 0) && ((EndTimePicker.Value.Subtract(StartTimePicker.Value)).Ticks > 0))
             {
                 for (int i = 0; i < WeekCheckedListBox.Items.Count; i++)

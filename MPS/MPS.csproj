@@ -61,6 +61,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ConSerialPort.cs" />
     <Compile Include="Record.cs" />
+    <Compile Include="TimeColumn.cs" />
     <Compile Include="ViewForm.cs">
       <SubType>Form</SubType>
     </Compile>

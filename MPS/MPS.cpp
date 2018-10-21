@@ -557,22 +557,8 @@ void buttonRead(void) {
 		break;
 
 	case 43: //  Меню "Получение данных с ПК"
-		if (Serial.available() > 0) {
-			String value;
-			value = Serial.readStringUntil('\n');
-			valTimerNum = FindTimer();
-
-			SaveTimer(valTimerNum, 0, 1);
-			SaveTimer(valTimerNum, 1, uint8_t(value.substring(0, 2).toInt()));
-			SaveTimer(valTimerNum, 2, uint8_t(value.substring(3, 5).toInt()));
-			SaveTimer(valTimerNum, 3, uint8_t(value.substring(6, 8).toInt()));
-			SaveTimer(valTimerNum, 4, uint8_t(value.substring(9, 11).toInt()));
-			SaveTimer(valTimerNum, 5, uint8_t(value.substring(12, 13).toInt()));
-			SaveTimer(valTimerNum, 6, uint8_t(value.substring(14).toInt()));
-			Serial.println("endSave");
-			j = 431;
-		}
-
+		editData("endSave");
+		j = 431;
 		pressedButton = 0;
 		break;
 
@@ -583,8 +569,15 @@ void buttonRead(void) {
 		break;
 
 	case 44:	// Меню "Изменение данных расписания"
-
+		editData("endEdit");
+		j = 441;
 		pressedButton = 0;
+		break;
+
+	case 441: //  Меню "Данные изменены"
+		delay(2000);
+		pressedButton = 0;
+		j = 4;
 		break;
 
 	case 45:	// Меню "Удаление расписания"
@@ -618,6 +611,24 @@ void buttonRead(void) {
 		lcd.clear();
 		flgDisplayUpdate = 1;
 		valMode = j;
+	}
+}
+
+void editData(String sender) {
+	if (Serial.available() > 0) {
+		String value;
+		value = Serial.readStringUntil('\n');
+		valTimerNum = value.substring(0, 1).toInt();
+
+		SaveTimer(valTimerNum, 0, 1);
+		SaveTimer(valTimerNum, 1, uint8_t(value.substring(2, 4).toInt()));
+		SaveTimer(valTimerNum, 2, uint8_t(value.substring(5, 7).toInt()));
+		SaveTimer(valTimerNum, 3, uint8_t(value.substring(8, 10).toInt()));
+		SaveTimer(valTimerNum, 4, uint8_t(value.substring(11, 13).toInt()));
+		SaveTimer(valTimerNum, 5, uint8_t(value.substring(14, 15).toInt()));
+		SaveTimer(valTimerNum, 6, uint8_t(value.substring(16).toInt()));
+		Serial.println(sender);
+		valTimerNum = 0;
 	}
 }
 //  ОБНОВЛЕНИЕ ИНФОРМАЦИИ НА ДИСПЛЕЕ  //

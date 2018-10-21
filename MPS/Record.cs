@@ -24,10 +24,10 @@ namespace MPS
         /// <param name="endTime">Конечное время</param>
         /// <param name="numberDevice">Номер реле</param>
         /// <param name="week">дни недели</param>
-        public Record(String startTime, string endTime, String numberDevice, int week, int numTimer)
+        public Record(DateTime startTime, DateTime endTime, String numberDevice, int week, int numTimer)
         {
-            this.StartTime = DateTime.Parse(startTime);
-            this.EndTime = DateTime.Parse(endTime);
+            this.StartTime = startTime;
+            this.EndTime = endTime;
             this.NumberDevice = int.Parse(numberDevice);
             this.Week = week;
             this.NumTimer = numTimer;
