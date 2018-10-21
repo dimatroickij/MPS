@@ -117,18 +117,52 @@ namespace MPS
                                 records.Add(new Record((DateTime)row.Cells[0].Value, (DateTime)row.Cells[1].Value, (String)row.Cells[2].Value, GetWeek(row), row.Index));
                                 break;
 
-                            case "Сохранить":
+                            case "Добавить":
                                 String str = "";
-                                str += e.RowIndex.ToString();
+                                
                                 DateTime[] datetimes = new DateTime[2];
                                 datetimes[0] = (DateTime)row.Cells[0].Value;
                                 datetimes[1] = (DateTime)row.Cells[1].Value;
                                 if ((datetimes[1].Subtract(datetimes[0]).Ticks > 0) && (GetWeek(row) > 0))
                                 {
-                                    str += ";" + datetimes[0].ToString("t") + ";" + datetimes[1].ToString("t");
+                                    String startTime = datetimes[0].ToString("t");
+                                    String endTime = datetimes[1].ToString("t");
+                                    startTime = startTime.Length != 5 ? "0" + startTime : startTime;
+                                    endTime = endTime.Length != 5 ? "0" + endTime : endTime;
+                                    str += startTime + ";" + endTime;
                                     str += ";" + row.Cells[2].Value + ";" + GetWeek(row).ToString();
 
-                                    if (ConSerialPort.Edit(str))
+                                    if (ConSerialPort.Save(str))
+                                    {
+                                        MessageBox.Show("Данные сохранены", "Полное расписание", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                        row.Cells[10].Value = "Изменить";
+                                        row.Cells[11].Value = "Удалить";
+                                        row.ReadOnly = true;
+                                        
+                                    }
+                                    else
+                                        MessageBox.Show("Возникла ошибка при изменении", "Полное расписание", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                }
+                                else
+                                    MessageBox.Show("Введены неправильные данные", "Полное расписание", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                break;
+
+                            case "Сохранить":
+                                String str2 = "";
+                                str2 += e.RowIndex.ToString();
+                                DateTime[] datetimes2 = new DateTime[2];
+                                datetimes2[0] = (DateTime)row.Cells[0].Value;
+                                datetimes2[1] = (DateTime)row.Cells[1].Value;
+                                if ((datetimes2[1].Subtract(datetimes2[0]).Ticks > 0) && (GetWeek(row) > 0))
+                                {
+                                    String startTime = datetimes2[0].ToString("t");
+                                    String endTime = datetimes2[1].ToString("t");
+                                    startTime = startTime.Length != 5 ? "0" + startTime : startTime;
+                                    endTime = endTime.Length != 5 ? "0" + endTime : endTime;
+                                    str2 += ";" + startTime + ";" + endTime;
+                                    str2 += ";" + row.Cells[2].Value + ";" + GetWeek(row).ToString();
+
+                                    if (ConSerialPort.Edit(str2))
                                     {
                                         MessageBox.Show("Данные изменены", "Полное расписание", MessageBoxButtons.OK, MessageBoxIcon.Information);
                                         row.Cells[10].Value = "Изменить";
@@ -171,6 +205,10 @@ namespace MPS
                                 SetWeek(row, record.Week);
                                 records.Remove(record);
                                 break;
+
+                            case "Отменить":
+                                dataGridView.Rows.RemoveAt(e.RowIndex);
+                                break;
                         }
                         break;
 
@@ -184,9 +222,9 @@ namespace MPS
             }
         }
 
-        private void ViewForm_Shown(object sender, EventArgs e)
+        private void AddButton_Click(object sender, EventArgs e)
         {
-
+            var z = dataGridView.Rows.Add(DateTime.Now, (DateTime.Now).AddMinutes(1), "1", false, false, false, false, false, false, false, "Добавить", "Отменить");
         }
     }
 }

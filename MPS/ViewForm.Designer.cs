@@ -29,8 +29,6 @@
         private void InitializeComponent()
         {
             this.dataGridView = new System.Windows.Forms.DataGridView();
-            this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.startTime = new MPS.TimeColumn();
             this.EndTime = new MPS.TimeColumn();
             this.NumDevice = new System.Windows.Forms.DataGridViewComboBoxColumn();
@@ -43,6 +41,11 @@
             this.weekSunday = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.editRecord = new System.Windows.Forms.DataGridViewButtonColumn();
             this.deleteRecord = new System.Windows.Forms.DataGridViewButtonColumn();
+            this.timeColumn1 = new MPS.TimeColumn();
+            this.timeColumn2 = new MPS.TimeColumn();
+            this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.AddButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
             this.SuspendLayout();
             // 
@@ -52,8 +55,7 @@
             this.dataGridView.AllowUserToDeleteRows = false;
             this.dataGridView.AllowUserToResizeColumns = false;
             this.dataGridView.AllowUserToResizeRows = false;
-            this.dataGridView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.dataGridView.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
@@ -76,29 +78,17 @@
             this.dataGridView.TabIndex = 0;
             this.dataGridView.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView_CellContentClick);
             // 
-            // dataGridViewTextBoxColumn1
-            // 
-            this.dataGridViewTextBoxColumn1.HeaderText = "Конечное время";
-            this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
-            // 
-            // dataGridViewTextBoxColumn2
-            // 
-            this.dataGridViewTextBoxColumn2.HeaderText = "Номер реле";
-            this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
-            // 
             // startTime
             // 
             this.startTime.HeaderText = "Начальное время";
             this.startTime.Name = "startTime";
             this.startTime.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.startTime.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
             // 
             // EndTime
             // 
             this.EndTime.HeaderText = "Конечное время";
             this.EndTime.Name = "EndTime";
             this.EndTime.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.EndTime.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
             // 
             // NumDevice
             // 
@@ -115,7 +105,6 @@
             "8"});
             this.NumDevice.Name = "NumDevice";
             this.NumDevice.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.NumDevice.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
             // 
             // weekMonday
             // 
@@ -167,11 +156,44 @@
             this.deleteRecord.Name = "deleteRecord";
             this.deleteRecord.Text = "Удалить";
             // 
+            // timeColumn1
+            // 
+            this.timeColumn1.HeaderText = "Начальное время";
+            this.timeColumn1.Name = "timeColumn1";
+            this.timeColumn1.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            // 
+            // timeColumn2
+            // 
+            this.timeColumn2.HeaderText = "Конечное время";
+            this.timeColumn2.Name = "timeColumn2";
+            this.timeColumn2.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            // 
+            // dataGridViewTextBoxColumn1
+            // 
+            this.dataGridViewTextBoxColumn1.HeaderText = "Конечное время";
+            this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
+            // 
+            // dataGridViewTextBoxColumn2
+            // 
+            this.dataGridViewTextBoxColumn2.HeaderText = "Номер реле";
+            this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
+            // 
+            // AddButton
+            // 
+            this.AddButton.Location = new System.Drawing.Point(12, 393);
+            this.AddButton.Name = "AddButton";
+            this.AddButton.Size = new System.Drawing.Size(352, 44);
+            this.AddButton.TabIndex = 1;
+            this.AddButton.Text = "Добавить расписание";
+            this.AddButton.UseVisualStyleBackColor = true;
+            this.AddButton.Click += new System.EventHandler(this.AddButton_Click);
+            // 
             // ViewForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1267, 399);
+            this.ClientSize = new System.Drawing.Size(1267, 449);
+            this.Controls.Add(this.AddButton);
             this.Controls.Add(this.dataGridView);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
@@ -180,7 +202,6 @@
             this.Text = "Полное расписание";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.ViewForm_FormClosed);
             this.Load += new System.EventHandler(this.ViewForm_Load);
-            this.Shown += new System.EventHandler(this.ViewForm_Shown);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).EndInit();
             this.ResumeLayout(false);
 
@@ -203,5 +224,8 @@
         private System.Windows.Forms.DataGridViewCheckBoxColumn weekSunday;
         private System.Windows.Forms.DataGridViewButtonColumn editRecord;
         private System.Windows.Forms.DataGridViewButtonColumn deleteRecord;
+        private TimeColumn timeColumn1;
+        private TimeColumn timeColumn2;
+        private System.Windows.Forms.Button AddButton;
     }
 }
