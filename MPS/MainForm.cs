@@ -26,7 +26,7 @@ namespace MPS
                 ConSerialPort.Connect();
                 if (ConSerialPort.connected)
                 {
-                    Thread.Sleep(2000);
+                    Thread.Sleep(1000);
                     WorkForm wf = new WorkForm();
                     wf.Show();
                     this.Hide();

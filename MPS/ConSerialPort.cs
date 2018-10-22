@@ -99,7 +99,8 @@ namespace MPS
             try
             {
                 sp.Write("s");
-                sp.Write(saveTimer.ToString()  + ";" + str);
+                //sp.Write(saveTimer.ToString()  + ":" + str);
+                sp.Write(str);
                 string returnMessage = sp.ReadLine();
 
                 if (returnMessage.Contains("endSave"))

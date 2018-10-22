@@ -536,7 +536,7 @@ void buttonRead(void) {
 		break;
 
 	case 411: //  Меню "Соединение установлено"
-		delay(2000);
+		delay(1000);
 		pressedButton = 0;
 		j = 4;
 		break;
@@ -563,7 +563,7 @@ void buttonRead(void) {
 		break;
 
 	case 431: //  Меню "Данные сохранены"
-		delay(2000);
+		delay(1000);
 		pressedButton = 0;
 		j = 4;
 		break;
@@ -575,7 +575,7 @@ void buttonRead(void) {
 		break;
 
 	case 441: //  Меню "Данные изменены"
-		delay(2000);
+		delay(1000);
 		pressedButton = 0;
 		j = 4;
 		break;
@@ -597,7 +597,7 @@ void buttonRead(void) {
 		break;
 
 	case 451: //  Меню "Данные удалены"
-		delay(2000);
+		delay(1000);
 		pressedButton = 0;
 		j = 4;
 		break;
