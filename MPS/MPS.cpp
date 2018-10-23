@@ -52,6 +52,8 @@ bool    flgDisplayUpdate = 1;       //  Флаг обновления дисплея
 int     numByte = 0;            //  Номер байта EEPROM
 int     valByte;              //  Значение байта EEPROM
 bool  connectPC = false;
+uint8_t setChanel[COUNT];	//  Установить: Включённое (1) или выключенное (0) реле
+
 
 LiquidCrystal_I2C lcd(0x27, 16, 2);     //  Объект - lcd для работы с дисплеем (адрес I2C = 0x27, количество столбцов = 16, количество строк = 2)
 iarduino_RTC    time(RTC_DS1307);     //  Объект - time для работы с часами RTC (тип модуля)
@@ -80,9 +82,7 @@ void    SaveTimer(uint8_t = 0,      //  Функция записи одного из параметров тайм
 	uint8_t = 0);
 uint8_t   FindTimer(void);        //  Функция поиска № следующего свободного места для записи расписания
 bool    TestTimer(void);        //  Функция проверки данных в ячейках EEPROM на соответствие (первый запуск программы)
-
 void setup() {
-
 	Serial.begin(9600);
 
 	//  Выводы на реле и пищалку в режим выхода //
@@ -93,6 +93,9 @@ void setup() {
 	}
 
 	pinMode(buzzer, OUTPUT);
+
+	for (int i = 0; i < COUNT; i++)
+		setChanel[i] = 0;
 
 	time.begin();
 	lcd.init();
@@ -676,27 +679,6 @@ void displayUpdate() {
 				}
 			}
 
-			/*valArray[4] = 15;
-			if (valArray[3]) {
-				lcd.setCursor(valArray[4], 0);
-				lcd.print("\4");
-				valArray[4]--;
-			}
-			if (valArray[2]) {
-				lcd.setCursor(valArray[4], 0);
-				lcd.print("\3");
-				valArray[4]--;
-			}
-			if (valArray[1]) {
-				lcd.setCursor(valArray[4], 0);
-				lcd.print("\2");
-				valArray[4]--;
-			}
-			if (valArray[0]) {
-				lcd.setCursor(valArray[4], 0);
-				lcd.print("\1");
-				valArray[4]--;
-			}*/
 			break;
 
 		case  1:  //  Меню "Таймеры"
@@ -1168,15 +1150,8 @@ void displayUpdate() {
 
 //  ФУНКЦИЯ, КОТОРАЯ ВКЛЮЧАЕТ НУЖНОЕ РЕЛЕ В ЗАВИСИМОСТИ ОТ РАСПИСАНИЯ
 void setRelay(void) {
-	uint8_t setChanel[COUNT];	//  Установить: Включённое (1) или выключенное (0) реле
-	for (int i = 0; i < COUNT; i++)
-	{
-		setChanel[i] = 0;
-	}
-
-	//	Если главное меню ...
 	if (valMode == 0) {
-		uint8_t  getChanel[COUNT];	//  Чтение: Включённое (1) или выключенное (0) реле
+		uint8_t  getChanel[COUNT];  //  Чтение: Включённое (1) или выключенное (0) реле
 		for (int i = 0; i < COUNT; i++)
 		{
 			getChanel[i] = 0;
@@ -1186,7 +1161,7 @@ void setRelay(void) {
 		uint32_t timeTimerStart = 0;  //  Стартовое время в секундах от 00:00:00 (для цикла)
 		uint32_t timeTimerStop = 0;   //  Конечное время в секундах от 00:00:00 (для цикла)
 		uint8_t  timeWeekday = 0;   //  Текущей день недели в формате: 1 - ПН, 2 - ВТ, 3 - СР, 4 - ЧТ, 5 - ПТ, 6 - СБ, 7 - ВС
-
+		valArray[0] = valArray[1] = valArray[2] = valArray[3] = 0;
 		timeRTC = (uint32_t)time.Hours * 3600 + time.minutes * 60 + time.seconds;
 		timeWeekday = time.weekday;
 
@@ -1209,7 +1184,6 @@ void setRelay(void) {
 			}
 		}
 
-		// Включение / выключение релейных модулей
 		for (int i = 0; i < COUNT; i++)
 		{
 			if (setChanel[i] != getChanel[i]) {
@@ -1220,8 +1194,6 @@ void setRelay(void) {
 					digitalWrite(relays[i], HIGH);
 			}
 		}
-		Serial.println(String(setChanel[0]) + String(setChanel[1]) + String(setChanel[2]) + String(setChanel[3]));
-		Serial.println(String(getChanel[0]) + String(getChanel[1]) + String(getChanel[2]) + String(getChanel[3]));
 	}
 }
 
