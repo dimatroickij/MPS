@@ -47,7 +47,7 @@ int     pressedButton = 0;          //  Нажатая кнопка
 uint8_t   valArray[7] = { 0,0,0,0,0,0,0 };  //  Определяем массив элементы которого будут хранить различную информацию в зависимости от режима
 char    valChar[5] = "    ";        //  Определяем массив символов (строку) информация которой будет отображаться на дисплее мигая
 int     valMode = 0;            //  Текущий режим
-uint8_t   valSubMode = 0;           //  Текущий подрежим
+int   valSubMode = 0;           //  Текущий подрежим
 uint8_t   valTimerNum = 0;          //  Выбранное расписание
 bool    flgDisplayUpdate = 1;       //  Флаг обновления дисплея
 int     numByte = 0;            //  Номер байта EEPROM
@@ -217,13 +217,21 @@ void buttonRead(void) {
 			else if (valSubMode == 2) { valSubMode = 3; }
 			else if (valSubMode == 3) { valSubMode = 4; }
 			else if (valSubMode == 4) {
-				j = 111;
-				SaveTimer(valTimerNum, 0, 1);
-				SaveTimer(valTimerNum, 1, valArray[0]);
-				SaveTimer(valTimerNum, 2, valArray[1]);
-				SaveTimer(valTimerNum, 3, valArray[2]);
-				SaveTimer(valTimerNum, 4, valArray[3]);
-				SaveTimer(valTimerNum, 5, valArray[4]);
+				if (((valArray[0] >= valArray[2]) && (valArray[1] >= valArray[3])) || (valArray[0] > valArray[2]))
+				{
+					j = 5;
+					valSubMode = 1111;
+				}
+				else
+				{
+					j = 111;
+					SaveTimer(valTimerNum, 0, 1);
+					SaveTimer(valTimerNum, 1, valArray[0]);
+					SaveTimer(valTimerNum, 2, valArray[1]);
+					SaveTimer(valTimerNum, 3, valArray[2]);
+					SaveTimer(valTimerNum, 4, valArray[3]);
+					SaveTimer(valTimerNum, 5, valArray[4]);
+				}
 			}
 		}
 		if (pressedButton == BACK) {
