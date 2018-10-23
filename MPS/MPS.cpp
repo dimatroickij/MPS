@@ -107,7 +107,7 @@ void setup() {
 	buttonBack.attachClick(clickButtonBack);
 	buttonNext.attachClick(clickButtonNext);
 	buttonOk.attachClick(clickButtonOK);
-
+	buttonOk.attachDoubleClick(dblClickButtonOK);
 	SetChars(16, 26, 14, 6, 38, 8, 4);    //  "У", "Я", "П", "И", "Ц", "Й", "Д"
 	lcd.setCursor(0, 0);
 	lcd.print(F("K\1PCOBA\2 \3O M\3C"));
@@ -173,24 +173,6 @@ void buttonRead(void) {
 		pressedButton = 0;
 		break;
 
-	case  2:  //  Меню "Часы"
-		if (pressedButton == OK) { j = 21; }
-		if (pressedButton == BACK) { j = 1; }
-		if (pressedButton == NEXT) { j = 3; }
-		pressedButton = 0;
-		break;
-
-	case  3:  //  Меню "Выход"
-		if (pressedButton == OK) {
-			j = 0;
-			valArray[0] = valArray[1] = valArray[2] = valArray[3] = 0;
-			while (Serial.available()) Serial.read();
-		}
-		if (pressedButton == BACK) { j = 2; }
-		if (pressedButton == NEXT) { j = 1; }
-		pressedButton = 0;
-		break;
-
 	case 11:  //  Меню "Таймеры > сохранённый таймер"
 		if (pressedButton == OK) { j = 111; }
 		if (pressedButton == BACK) {
@@ -213,183 +195,6 @@ void buttonRead(void) {
 		pressedButton = 0;
 		break;
 
-	case 12:  //  Меню "Таймеры > Новый таймер"
-		if (pressedButton == OK) { j = 121; }
-		if (pressedButton == BACK) {
-			j = ReadTimer() ? 11 : 14;  //  Проверка на существование хотя бы одного расписания. Если нет, то меню " Таймеры > Выход"
-			if (ReadTimer()) {
-				valTimerNum = FindTimer() - 1;
-			}
-		}
-		if (pressedButton == NEXT) { j = ReadTimer() ? 13 : 14; } //  Проверка на существование хотя бы одного расписания. Если есть, то открывается меню "Стереть всё".
-		pressedButton = 0;
-		break;
-
-	case 13:  // Меню "Таймеры > Стереть всё"
-		if (pressedButton == OK) { j = 131; }
-		if (pressedButton == BACK) {
-			j = FindTimer() < maxTimers ? 12 : 11;  //  Проверка на предельное число расписаний. Если переполнено, то открывается последнее расписание
-			valTimerNum = j == 11 ? maxTimers - 1 : 0;
-		}
-		if (pressedButton == NEXT) {
-			j = 14;
-			valTimerNum = 0;
-		}
-		pressedButton = 0;
-		break;
-
-	case 14:  // Меню "Таймеры > Выход"
-		if (pressedButton == OK) { j = 1; }
-		if (pressedButton == BACK) {
-			j = ReadTimer() ? 13 : (FindTimer() < maxTimers ? 12 : 11); //  Проверка на существование хотя бы одного расписания. Если есть, то меню "Таймеры > Стереть всё"
-			valTimerNum = 0;
-		}
-		if (pressedButton == NEXT) {
-			j = ReadTimer() ? 11 : (FindTimer() < maxTimers ? 12 : 13); // Проверка на существование хотя бы одного расписания. Если нет, то проверка на переполненность количества расписаний 
-			valTimerNum = 0;
-		}
-		pressedButton = 0;
-		break;
-
-	case 21:  //  Меню "Часы > Время"
-		if (pressedButton == OK) {
-			j = 211;
-			valSubMode = 0;
-			time.gettime();
-			valArray[0] = time.Hours;
-			valArray[1] = time.minutes;
-			valArray[2] = time.seconds;
-		}
-		if (pressedButton == BACK) { j = 23; }
-		if (pressedButton == NEXT) { j = 22; }
-		pressedButton = 0;
-		break;
-
-	case 22:  //  Меню "Часы > Дата"
-		if (pressedButton == OK) {
-			j = 221;
-			valSubMode = 0;
-			time.gettime();
-			valArray[0] = time.day;
-			valArray[1] = time.month;
-			valArray[2] = time.year;
-		}
-		if (pressedButton == BACK) { j = 21; }
-		if (pressedButton == NEXT) { j = 23; }
-		pressedButton = 0;
-		break;
-
-	case 23:  //  Меню "Часы > Выход"
-		if (pressedButton == OK) { j = 2; }
-		if (pressedButton == BACK) { j = 22; }
-		if (pressedButton == NEXT) { j = 21; }
-		pressedButton = 0;
-		break;
-
-	case 211: //  Меню "Часы > Время > Установка времени"
-		if (pressedButton == OK) {
-			if (valSubMode == 0) { valSubMode = 1; }
-			else if (valSubMode == 1) { valSubMode = 2; }
-			else if (valSubMode == 2) {
-				time.settime(valArray[2], valArray[1], valArray[0]);
-				j = 21;
-			}
-		}
-		if (pressedButton == BACK) {
-			valArray[valSubMode] --;
-			if (valArray[0] > 23) { valArray[0] = 23; }
-			if (valArray[1] > 59) { valArray[1] = 59; }
-			if (valArray[2] > 59) { valArray[2] = 59; }
-		}
-		if (pressedButton == NEXT) {
-			valArray[valSubMode] ++;
-			if (valArray[0] > 23) { valArray[0] = 0; }
-			if (valArray[1] > 59) { valArray[1] = 0; }
-			if (valArray[2] > 59) { valArray[2] = 0; }
-		}
-		flgDisplayUpdate = 1;
-		pressedButton = 0;
-		break;
-
-	case 221: //  Меню "Часы > Дата > Установка даты"
-		if (pressedButton == OK) {
-			if (valSubMode == 0) { valSubMode = 1; }
-			else if (valSubMode == 1) { valSubMode = 2; }
-			else if (valSubMode == 2)
-			{
-				int a, y, m, R;
-				a = (14 - valArray[1]) / 12;
-				y = valArray[2] - a;
-				m = valArray[1] + 12 * a - 2;
-				R = 7000 + (valArray[0] + y + y / 4 - y / 100 + y / 400 + (31 * m) / 12);
-				valArray[3] = R % 7;
-				time.settime(-1, -1, -1, valArray[0], valArray[1], valArray[2], valArray[3]);
-				j = 22;
-			}
-		}
-		if (pressedButton == BACK) {
-			valArray[valSubMode] --;
-			if (valArray[0] == 0) { valArray[0] = 31; }
-			if (valArray[1] == 0) { valArray[1] = 12; }
-			if (valArray[2] > 99) { valArray[2] = 99; }
-		}
-		if (pressedButton == NEXT) {
-			valArray[valSubMode] ++;
-			if (valArray[0] > 31) { valArray[0] = 1; }
-			if (valArray[1] > 12) { valArray[1] = 1; }
-			if (valArray[2] > 99) { valArray[2] = 0; }
-		}
-		flgDisplayUpdate = 1;
-		pressedButton = 0;
-		break;
-
-	case 121: //  Меню "Таймеры > Новый таймер > Новый таймер создан"
-		j = 1111;
-		valTimerNum = FindTimer();
-		valSubMode = 0;
-		valArray[0] = valArray[1] = valArray[2] = valArray[3] = 0;
-		valArray[4] = 1;
-		SaveTimer(valTimerNum, 0, 1);
-		SaveTimer(valTimerNum, 1);
-		SaveTimer(valTimerNum, 2);
-		SaveTimer(valTimerNum, 3);
-		SaveTimer(valTimerNum, 4);
-		SaveTimer(valTimerNum, 5, 1);
-		SaveTimer(valTimerNum, 6, 127);
-
-		delay(2000);
-		pressedButton = 0;
-		break;
-
-	case 131: // Меню "Таймеры > Стереть всё > Все данные стёрты"
-		j = 12;
-		for (valArray[0] = 0; valArray[0] < maxTimers; valArray[0] ++) { SaveTimer(valArray[0]); }
-		delay(2000);
-		pressedButton = 0;
-		break;
-
-	case 1131:  //  Меню "Таймеры > сохранённый таймер > Стереть таймер > Таймер удалён"
-		j = 12;
-		valArray[0] = valTimerNum;
-		valArray[1] = FindTimer() - 1;
-
-		// Поиск ближайшего расписания
-		if (valArray[0] < valArray[1]) {
-			j = 11;
-			valTimerNum = valArray[0];
-		}
-		else if (valArray[1] > 0) {
-			j = 11;
-			valTimerNum = valArray[0] - 1;
-		}
-
-		//  Сдвиг следующих расписаний на 7 байт назад
-		shift();
-
-		delay(2000);
-		pressedButton = 0;
-		break;
-
 	case 111: //  Меню "Таймеры > сохранённый таймер > Время и канал"
 		if (pressedButton == OK) {
 			j = 1111;
@@ -402,37 +207,6 @@ void buttonRead(void) {
 		}
 		if (pressedButton == BACK) { j = 114; }
 		if (pressedButton == NEXT) { j = 112; }
-		pressedButton = 0;
-		break;
-
-	case 112: //  Меню "Таймеры > сохранённый таймер > Повторы"
-		if (pressedButton == OK) {
-			j = 1121;
-			valSubMode = 0;
-			valArray[0] = bitRead(ReadTimer(valTimerNum, 6), 6);
-			valArray[1] = bitRead(ReadTimer(valTimerNum, 6), 5);
-			valArray[2] = bitRead(ReadTimer(valTimerNum, 6), 4);
-			valArray[3] = bitRead(ReadTimer(valTimerNum, 6), 3);
-			valArray[4] = bitRead(ReadTimer(valTimerNum, 6), 2);
-			valArray[5] = bitRead(ReadTimer(valTimerNum, 6), 1);
-			valArray[6] = bitRead(ReadTimer(valTimerNum, 6), 0);
-		}
-		if (pressedButton == BACK) { j = 111; }
-		if (pressedButton == NEXT) { j = 113; }
-		pressedButton = 0;
-		break;
-
-	case 113: //  Меню "Таймеры > сохранённый таймер > Стереть таймер"
-		if (pressedButton == OK) { j = 1131; }
-		if (pressedButton == BACK) { j = 112; }
-		if (pressedButton == NEXT) { j = 114; }
-		pressedButton = 0;
-		break;
-
-	case 114: //  Меню "Таймеры > сохранённый таймер > Выход"
-		if (pressedButton == OK) { j = 11; }
-		if (pressedButton == BACK) { j = 113; }
-		if (pressedButton == NEXT) { j = 111; }
 		pressedButton = 0;
 		break;
 
@@ -472,6 +246,23 @@ void buttonRead(void) {
 		pressedButton = 0;
 		break;
 
+	case 112: //  Меню "Таймеры > сохранённый таймер > Повторы"
+		if (pressedButton == OK) {
+			j = 1121;
+			valSubMode = 0;
+			valArray[0] = bitRead(ReadTimer(valTimerNum, 6), 6);
+			valArray[1] = bitRead(ReadTimer(valTimerNum, 6), 5);
+			valArray[2] = bitRead(ReadTimer(valTimerNum, 6), 4);
+			valArray[3] = bitRead(ReadTimer(valTimerNum, 6), 3);
+			valArray[4] = bitRead(ReadTimer(valTimerNum, 6), 2);
+			valArray[5] = bitRead(ReadTimer(valTimerNum, 6), 1);
+			valArray[6] = bitRead(ReadTimer(valTimerNum, 6), 0);
+		}
+		if (pressedButton == BACK) { j = 111; }
+		if (pressedButton == NEXT) { j = 113; }
+		pressedButton = 0;
+		break;
+
 	case 1121:  //  Меню "Таймеры > сохранённый таймер > Повторы > изменение повторов"
 		if (pressedButton == OK) {
 			flgDisplayUpdate = 1;
@@ -500,6 +291,223 @@ void buttonRead(void) {
 			if (valArray[valSubMode]) { valArray[valSubMode] = 0; }
 			else { valArray[valSubMode] = 1; }
 		}
+		pressedButton = 0;
+		break;
+
+	case 113: //  Меню "Таймеры > сохранённый таймер > Стереть таймер"
+		if (pressedButton == OK) { j = 1131; }
+		if (pressedButton == BACK) { j = 112; }
+		if (pressedButton == NEXT) { j = 114; }
+		pressedButton = 0;
+		break;
+
+	case 1131:  //  Меню "Таймеры > сохранённый таймер > Стереть таймер > Таймер удалён"
+		j = 12;
+		valArray[0] = valTimerNum;
+		valArray[1] = FindTimer() - 1;
+
+		// Поиск ближайшего расписания
+		if (valArray[0] < valArray[1]) {
+			j = 11;
+			valTimerNum = valArray[0];
+		}
+		else if (valArray[1] > 0) {
+			j = 11;
+			valTimerNum = valArray[0] - 1;
+		}
+
+		//  Сдвиг следующих расписаний на 7 байт назад
+		shift();
+
+		delay(2000);
+		pressedButton = 0;
+		break;
+
+	case 114: //  Меню "Таймеры > сохранённый таймер > Выход"
+		if (pressedButton == OK) { j = 11; }
+		if (pressedButton == BACK) { j = 113; }
+		if (pressedButton == NEXT) { j = 111; }
+		pressedButton = 0;
+		break;
+
+	case 12:  //  Меню "Таймеры > Новый таймер"
+		if (pressedButton == OK) { j = 121; }
+		if (pressedButton == BACK) {
+			j = ReadTimer() ? 11 : 14;  //  Проверка на существование хотя бы одного расписания. Если нет, то меню " Таймеры > Выход"
+			if (ReadTimer()) {
+				valTimerNum = FindTimer() - 1;
+			}
+		}
+		if (pressedButton == NEXT) { j = ReadTimer() ? 13 : 14; } //  Проверка на существование хотя бы одного расписания. Если есть, то открывается меню "Стереть всё".
+		pressedButton = 0;
+		break;
+
+	case 121: //  Меню "Таймеры > Новый таймер > Новый таймер создан"
+		j = 1111;
+		valTimerNum = FindTimer();
+		valSubMode = 0;
+		valArray[0] = valArray[1] = valArray[2] = valArray[3] = 0;
+		valArray[4] = 1;
+		SaveTimer(valTimerNum, 0, 1);
+		SaveTimer(valTimerNum, 1);
+		SaveTimer(valTimerNum, 2);
+		SaveTimer(valTimerNum, 3);
+		SaveTimer(valTimerNum, 4);
+		SaveTimer(valTimerNum, 5, 1);
+		SaveTimer(valTimerNum, 6, 127);
+
+		delay(2000);
+		pressedButton = 0;
+		break;
+
+	case 13:  // Меню "Таймеры > Стереть всё"
+		if (pressedButton == OK) { j = 131; }
+		if (pressedButton == BACK) {
+			j = FindTimer() < maxTimers ? 12 : 11;  //  Проверка на предельное число расписаний. Если переполнено, то открывается последнее расписание
+			valTimerNum = j == 11 ? maxTimers - 1 : 0;
+		}
+		if (pressedButton == NEXT) {
+			j = 14;
+			valTimerNum = 0;
+		}
+		pressedButton = 0;
+		break;
+
+	case 131: // Меню "Таймеры > Стереть всё > Все данные стёрты"
+		j = 12;
+		for (valArray[0] = 0; valArray[0] < maxTimers; valArray[0] ++) { SaveTimer(valArray[0]); }
+		delay(2000);
+		pressedButton = 0;
+		break;
+
+	case 14:  // Меню "Таймеры > Выход"
+		if (pressedButton == OK) { j = 1; }
+		if (pressedButton == BACK) {
+			j = ReadTimer() ? 13 : (FindTimer() < maxTimers ? 12 : 11); //  Проверка на существование хотя бы одного расписания. Если есть, то меню "Таймеры > Стереть всё"
+			valTimerNum = 0;
+		}
+		if (pressedButton == NEXT) {
+			j = ReadTimer() ? 11 : (FindTimer() < maxTimers ? 12 : 13); // Проверка на существование хотя бы одного расписания. Если нет, то проверка на переполненность количества расписаний 
+			valTimerNum = 0;
+		}
+		pressedButton = 0;
+		break;
+
+	case  2:  //  Меню "Часы"
+		if (pressedButton == OK) { j = 21; }
+		if (pressedButton == BACK) { j = 1; }
+		if (pressedButton == NEXT) { j = 3; }
+		pressedButton = 0;
+		break;
+
+	case 21:  //  Меню "Часы > Время"
+		if (pressedButton == OK) {
+			j = 211;
+			valSubMode = 0;
+			time.gettime();
+			valArray[0] = time.Hours;
+			valArray[1] = time.minutes;
+			valArray[2] = time.seconds;
+		}
+		if (pressedButton == BACK) { j = 23; }
+		if (pressedButton == NEXT) { j = 22; }
+		pressedButton = 0;
+		break;
+
+	case 211: //  Меню "Часы > Время > Установка времени"
+		if (pressedButton == OK) {
+			if (valSubMode == 0) { valSubMode = 1; }
+			else if (valSubMode == 1) { valSubMode = 2; }
+			else if (valSubMode == 2) {
+				time.settime(valArray[2], valArray[1], valArray[0]);
+				j = 21;
+			}
+		}
+		if (pressedButton == BACK) {
+			valArray[valSubMode] --;
+			if (valArray[0] > 23) { valArray[0] = 23; }
+			if (valArray[1] > 59) { valArray[1] = 59; }
+			if (valArray[2] > 59) { valArray[2] = 59; }
+		}
+		if (pressedButton == NEXT) {
+			valArray[valSubMode] ++;
+			if (valArray[0] > 23) { valArray[0] = 0; }
+			if (valArray[1] > 59) { valArray[1] = 0; }
+			if (valArray[2] > 59) { valArray[2] = 0; }
+		}
+		flgDisplayUpdate = 1;
+		pressedButton = 0;
+		break;
+
+	case 22:  //  Меню "Часы > Дата"
+		if (pressedButton == OK) {
+			j = 221;
+			valSubMode = 0;
+			time.gettime();
+			valArray[0] = time.day;
+			valArray[1] = time.month;
+			valArray[2] = time.year;
+		}
+		if (pressedButton == BACK) { j = 21; }
+		if (pressedButton == NEXT) { j = 23; }
+		pressedButton = 0;
+		break;
+
+	case 221: //  Меню "Часы > Дата > Установка даты"
+		if (pressedButton == OK) {
+			if (valSubMode == 0) { valSubMode = 1; }
+			else if (valSubMode == 1) { valSubMode = 2; }
+			else if (valSubMode == 2)
+			{
+				if (checkDate())
+				{
+					int a, y, m, R;
+					a = (14 - valArray[1]) / 12;
+					y = valArray[2] - a;
+					m = valArray[1] + 12 * a - 2;
+					R = 7000 + (valArray[0] + y + y / 4 - y / 100 + y / 400 + (31 * m) / 12);
+					valArray[3] = R % 7;
+					time.settime(-1, -1, -1, valArray[0], valArray[1], valArray[2], valArray[3]);
+					valArray[0] = valArray[1] = valArray[2] = valArray[3] = 0;
+					j = 22;
+				}
+				else {
+					j = 5;
+					valSubMode = 221;
+				}
+			}
+		}
+		if (pressedButton == BACK) {
+			valArray[valSubMode] --;
+			if (valArray[0] == 0) { valArray[0] = 31; }
+			if (valArray[1] == 0) { valArray[1] = 12; }
+			if (valArray[2] > 99) { valArray[2] = 99; }
+		}
+		if (pressedButton == NEXT) {
+			valArray[valSubMode] ++;
+			if (valArray[0] > 31) { valArray[0] = 1; }
+			if (valArray[1] > 12) { valArray[1] = 1; }
+			if (valArray[2] > 99) { valArray[2] = 0; }
+		}
+		flgDisplayUpdate = 1;
+		pressedButton = 0;
+		break;
+
+	case 23:  //  Меню "Часы > Выход"
+		if (pressedButton == OK) { j = 2; }
+		if (pressedButton == BACK) { j = 22; }
+		if (pressedButton == NEXT) { j = 21; }
+		pressedButton = 0;
+		break;
+
+	case  3:  //  Меню "Выход"
+		if (pressedButton == OK) {
+			j = 0;
+			valArray[0] = valArray[1] = valArray[2] = valArray[3] = 0;
+			while (Serial.available()) Serial.read();
+		}
+		if (pressedButton == BACK) { j = 2; }
+		if (pressedButton == NEXT) { j = 1; }
 		pressedButton = 0;
 		break;
 
@@ -602,9 +610,13 @@ void buttonRead(void) {
 		j = 4;
 		break;
 
+	case 5:	//	Обработка ошибок
+		delay(1000);
+		pressedButton = 0;
+		j = valSubMode;
+		valSubMode = 0;
+		break;
 	}
-
-
 
 	//  Изменение текущего состояния на следующее, обновление данных на экране
 	if (j < 4000) {
@@ -614,23 +626,6 @@ void buttonRead(void) {
 	}
 }
 
-void editData(String sender) {
-	if (Serial.available() > 0) {
-		String value;
-		value = Serial.readStringUntil('\n');
-		valTimerNum = value.substring(0, 1).toInt();
-
-		SaveTimer(valTimerNum, 0, 1);
-		SaveTimer(valTimerNum, 1, uint8_t(value.substring(2, 4).toInt()));
-		SaveTimer(valTimerNum, 2, uint8_t(value.substring(5, 7).toInt()));
-		SaveTimer(valTimerNum, 3, uint8_t(value.substring(8, 10).toInt()));
-		SaveTimer(valTimerNum, 4, uint8_t(value.substring(11, 13).toInt()));
-		SaveTimer(valTimerNum, 5, uint8_t(value.substring(14, 15).toInt()));
-		SaveTimer(valTimerNum, 6, uint8_t(value.substring(16).toInt()));
-		Serial.println(sender);
-		valTimerNum = 0;
-	}
-}
 //  ОБНОВЛЕНИЕ ИНФОРМАЦИИ НА ДИСПЛЕЕ  //
 void displayUpdate() {
 	if (flgDisplayUpdate) {
@@ -691,26 +686,6 @@ void displayUpdate() {
 			lcd.print(F("<   TA\4MEP\5    >"));
 			break;
 
-		case  2:  //  Меню "Часы"
-			SetChars(11, 15, 25, 18, 20);   // "м", "н", "ю", "Ч", "Ы"
-
-			lcd.setCursor(0, 0);
-			lcd.print(F("\1e\2\3:"));
-
-			lcd.setCursor(0, 1);
-			lcd.print(F("<     \4AC\5     >"));
-			break;
-
-		case  3:  //  Меню "Выход"
-			SetChars(11, 15, 25, 4, 20);  // "м", "н", "ю", "Д", "Ы"
-
-			lcd.setCursor(0, 0);
-			lcd.print(F("\1e\2\3:"));
-
-			lcd.setCursor(0, 1);
-			lcd.print(F("<    B\5XO\4     >"));
-			break;
-
 		case 11:  //  Меню "Таймеры > сохранённый таймер"
 			SetChars(11, 15, 25, 17, 9, 21);  //  "м", "н", "ю", "т", "й", "ы"
 
@@ -740,155 +715,6 @@ void displayUpdate() {
 			lcd.print(ReadTimer(valTimerNum, 5));
 			break;
 
-		case 12:  //  Меню "Таймеры > Новый таймер"
-			SetChars(15, 25, 17, 9, 21, 8, 20); // "н", "ю", "т", "й", "ы", "Й", "Ы"
-
-			lcd.setCursor(0, 0);
-			lcd.print(F("me\1\2>\3a\4mep\5:"));
-
-			lcd.setCursor(0, 1);
-			lcd.print(F("< HOB\7\6 TA\6MEP >"));
-
-			break;
-
-		case 13:  // Меню "Таймеры > Стереть всё"
-			SetChars(11, 15, 25, 17, 9, 21, 22);  //  "м", "н", "ю", "т", "й", "ы", "Ь"
-
-			lcd.setCursor(0, 0);
-			lcd.print(F("\1e\2\3>\4a\5\1ep\6:"));
-
-			lcd.setCursor(0, 1);
-			lcd.print(F("< CTEPET\7 BCE  >"));
-
-			break;
-
-		case 14:  // Меню "Таймеры > Выход"
-			SetChars(15, 25, 17, 9, 21, 4, 20); // "н", "ю", "т", "й", "ы", "Д", "Ы"
-
-			lcd.setCursor(0, 0);
-			lcd.print(F("me\1\2>\3a\4mep\5:"));
-
-			lcd.setCursor(0, 1);
-			lcd.print(F("<    B\7XO\6     >"));
-
-			break;
-
-		case 21:  //  Меню "Часы > Время"
-			SetChars(11, 15, 25, 19, 21, 26); //  "м", "н", "ю", "ч", "ы", "Я"
-
-			lcd.setCursor(0, 0);
-			lcd.print(F("\1e\2\3>\4ac\5:"));
-
-			lcd.setCursor(0, 1);
-			lcd.print(F("<    BPEM\6     >"));
-			break;
-
-		case 22:  //  Меню "Часы > Дата"
-			SetChars(11, 15, 25, 19, 21, 4);  //  "м", "н", "ю", "ч", "ы", "Д"
-
-			lcd.setCursor(0, 0);
-			lcd.print(F("\1e\2\3>\4ac\5:"));
-
-			lcd.setCursor(0, 1);
-			lcd.print(F("<     \6ATA     >"));
-			break;
-
-		case 23:  //  Меню "Часы > Выход"
-			SetChars(11, 15, 25, 19, 21, 4, 20);  //  "м", "н", "ю", "ч", "ы", "Д", "Ы"
-
-			lcd.setCursor(0, 0);
-			lcd.print(F("\1e\2\3>\4ac\5:"));
-
-			lcd.setCursor(0, 1);
-			lcd.print(F("<    B\7XO\6     >"));
-			break;
-
-		case 211: //  Меню "Часы > Время > Установка времени"
-			SetChars(11, 15, 25, 19, 21, 1, 27);  //  "м", "н", "ю", "ч", "ы", "в", "я"
-
-			lcd.setCursor(0, 0);
-			lcd.print(F("\1e\2\3>\4ac\5>\6pe\1\7:"));
-
-			lcd.setCursor(4, 1);
-			valChar[0] = valArray[0] / 10 + 48;
-			valChar[1] = valArray[0] % 10 + 48;
-			valChar[2] = 0;
-			lcd.print((millis() % 1000 < 500 && valSubMode == 0) ? "  " : valChar);
-			lcd.print(":");
-
-			lcd.setCursor(7, 1);
-			valChar[0] = valArray[1] / 10 + 48;
-			valChar[1] = valArray[1] % 10 + 48;
-			valChar[2] = 0;
-			lcd.print((millis() % 1000 < 500 && valSubMode == 1) ? "  " : valChar);
-			lcd.print(":");
-
-			lcd.setCursor(10, 1);
-			valChar[0] = valArray[2] / 10 + 48;
-			valChar[1] = valArray[2] % 10 + 48;
-			valChar[2] = 0;
-			lcd.print((millis() % 1000 < 500 && valSubMode == 2) ? "  " : valChar);
-			break;
-
-		case 221: //  Меню "Часы > Дата > Установка даты"
-			SetChars(24, 18, 20, 4);  //  "Ю", "Ч", "Ы", "Д"
-
-			lcd.setCursor(0, 0);
-			lcd.print(F("MEH\1>\2AC\3>\4ATA:"));
-
-			lcd.setCursor(3, 1);
-			valChar[0] = valArray[0] / 10 + 48;
-			valChar[1] = valArray[0] % 10 + 48;
-			valChar[2] = 0;
-			lcd.print((millis() % 1000 < 500 && valSubMode == 0) ? "  " : valChar);
-			lcd.print(".");
-
-			lcd.setCursor(6, 1);
-			valChar[0] = valArray[1] / 10 + 48;
-			valChar[1] = valArray[1] % 10 + 48;
-			valChar[2] = 0;
-			lcd.print((millis() % 1000 < 500 && valSubMode == 1) ? "  " : valChar);
-			lcd.print(".");
-
-			lcd.setCursor(9, 1);
-			valChar[0] = '2';
-			valChar[1] = '0';
-			valChar[2] = valArray[2] / 10 + 48;
-			valChar[3] = valArray[2] % 10 + 48;
-			valChar[4] = 0;
-			lcd.print((millis() % 1000 < 500 && valSubMode == 2) ? "    " : valChar);
-			break;
-
-		case 121: //  Меню "Таймеры > Новый таймер > Новый таймер создан"
-			SetChars(20, 8, 4); //  "Ы", "Й", "Д"
-
-			lcd.setCursor(2, 0);
-			lcd.print(F("HOB\1\2 TA\2MEP"));
-
-			lcd.setCursor(5, 1); lcd.print(F("CO3\3AH"));
-
-			break;
-
-		case 131: // Меню "Таймеры > Стереть всё > Все данные стёрты"
-			SetChars(20, 8, 4, 16, 12); //  "Ы", "Й", "Д", "У", "Л"
-
-			lcd.setCursor(2, 0);
-			lcd.print(F("BCE TA\2MEP\1"));
-
-			lcd.setCursor(4, 1);
-			lcd.print(F("\4\3A\5EH\1"));
-			break;
-
-		case 1131:  //  Меню "Таймеры > сохранённый таймер > Стереть таймер > Таймер 
-			SetChars(8, 16, 4, 12); //  "Й", "Д", "У", "Л"
-
-			lcd.setCursor(5, 0);
-			lcd.print(F("TA\1MEP"));
-
-			lcd.setCursor(5, 1);
-			lcd.print(F("\2\3A\4EH"));
-			break;
-
 		case 111: //  Меню "Таймеры > сохранённый таймер > Время и канал"
 			SetChars(17, 9, 21, 23, 26, 6, 12); //  "т", "й", "ы", "...", "Я", "И", "Л"
 
@@ -907,66 +733,6 @@ void displayUpdate() {
 
 			lcd.setCursor(0, 1);
 			lcd.print(F("<BPEM\5  \6 KAHA\7>"));
-			break;
-
-		case 112: //  Меню "Таймеры > сохранённый таймер > Повторы"
-			SetChars(17, 9, 21, 23, 14, 20);  //  "т", "й", "ы", "...", "П", "Ы"
-
-			lcd.setCursor(0, 0);
-			lcd.print(F("m>\1a\2mep\3>"));
-
-			lcd.setCursor(10, 0);
-			lcd.print(ReadTimer(valTimerNum, 1) < 10 ? "0" : "");
-			lcd.print(ReadTimer(valTimerNum, 1));
-			lcd.print(":");
-
-			lcd.setCursor(13, 0);
-			lcd.print(ReadTimer(valTimerNum, 2) < 10 ? "0" : "");
-			lcd.print(ReadTimer(valTimerNum, 2));
-			lcd.print("\4");
-
-			lcd.setCursor(0, 1);
-			lcd.print(F("<   \5OBTOP\6    >"));
-			break;
-
-		case 113: //  Меню "Таймеры > сохранённый таймер > Стереть таймер"
-			SetChars(17, 9, 21, 23, 22, 8); //  "т", "й", "ы", "...", "Ь", "Й"
-
-			lcd.setCursor(0, 0);
-			lcd.print(F("m>\1a\2mep\3>"));
-
-			lcd.setCursor(10, 0);
-			lcd.print(ReadTimer(valTimerNum, 1) < 10 ? "0" : "");
-			lcd.print(ReadTimer(valTimerNum, 1));
-			lcd.print(":");
-
-			lcd.setCursor(13, 0);
-			lcd.print(ReadTimer(valTimerNum, 2) < 10 ? "0" : "");
-			lcd.print(ReadTimer(valTimerNum, 2));
-			lcd.print("\4");
-
-			lcd.setCursor(0, 1);
-			lcd.print(F("<CTEPET\5 TA\6MEP>"));
-			break;
-
-		case 114: //  Меню "Таймеры > сохранённый таймер > Выход"
-			SetChars(17, 9, 21, 23, 20, 4); //  "т", "й", "ы", "...", "Ы", "Д"
-
-			lcd.setCursor(0, 0);
-			lcd.print(F("m>\1a\2mep\3>"));
-
-			lcd.setCursor(10, 0);
-			lcd.print(ReadTimer(valTimerNum, 1) < 10 ? "0" : "");
-			lcd.print(ReadTimer(valTimerNum, 1));
-			lcd.print(":");
-
-			lcd.setCursor(13, 0);
-			lcd.print(ReadTimer(valTimerNum, 2) < 10 ? "0" : "");
-			lcd.print(ReadTimer(valTimerNum, 2));
-			lcd.print("\4");
-
-			lcd.setCursor(0, 1);
-			lcd.print(F("<    B\5XO\6     >"));
 			break;
 
 		case 1111:  //  Меню "Таймеры > сохранённый таймер > Время и канал > изменение времени и канала"
@@ -1008,6 +774,26 @@ void displayUpdate() {
 			lcd.print((millis() % 1000 < 500 && valSubMode == 4) ? "  " : valChar);
 			break;
 
+		case 112: //  Меню "Таймеры > сохранённый таймер > Повторы"
+			SetChars(17, 9, 21, 23, 14, 20);  //  "т", "й", "ы", "...", "П", "Ы"
+
+			lcd.setCursor(0, 0);
+			lcd.print(F("m>\1a\2mep\3>"));
+
+			lcd.setCursor(10, 0);
+			lcd.print(ReadTimer(valTimerNum, 1) < 10 ? "0" : "");
+			lcd.print(ReadTimer(valTimerNum, 1));
+			lcd.print(":");
+
+			lcd.setCursor(13, 0);
+			lcd.print(ReadTimer(valTimerNum, 2) < 10 ? "0" : "");
+			lcd.print(ReadTimer(valTimerNum, 2));
+			lcd.print("\4");
+
+			lcd.setCursor(0, 1);
+			lcd.print(F("<   \5OBTOP\6    >"));
+			break;
+
 		case 1121:  //  Меню "Таймеры > сохранённый таймер > Повторы > изменение повторов"
 			SetChars(28, 29, 30, 31, 32, 33, 34); //  "ПН", "ВТ", "СР", "ЧТ", "ПТ", "СБ", "ВС"
 
@@ -1037,6 +823,215 @@ void displayUpdate() {
 
 			lcd.setCursor(valSubMode * 2 + 1, 1);
 			lcd.blink();
+			break;
+
+		case 113: //  Меню "Таймеры > сохранённый таймер > Стереть таймер"
+			SetChars(17, 9, 21, 23, 22, 8); //  "т", "й", "ы", "...", "Ь", "Й"
+
+			lcd.setCursor(0, 0);
+			lcd.print(F("m>\1a\2mep\3>"));
+
+			lcd.setCursor(10, 0);
+			lcd.print(ReadTimer(valTimerNum, 1) < 10 ? "0" : "");
+			lcd.print(ReadTimer(valTimerNum, 1));
+			lcd.print(":");
+
+			lcd.setCursor(13, 0);
+			lcd.print(ReadTimer(valTimerNum, 2) < 10 ? "0" : "");
+			lcd.print(ReadTimer(valTimerNum, 2));
+			lcd.print("\4");
+
+			lcd.setCursor(0, 1);
+			lcd.print(F("<CTEPET\5 TA\6MEP>"));
+			break;
+
+		case 1131:  //  Меню "Таймеры > сохранённый таймер > Стереть таймер > Таймер 
+			SetChars(8, 16, 4, 12); //  "Й", "Д", "У", "Л"
+
+			lcd.setCursor(5, 0);
+			lcd.print(F("TA\1MEP"));
+
+			lcd.setCursor(5, 1);
+			lcd.print(F("\2\3A\4EH"));
+			break;
+
+		case 114: //  Меню "Таймеры > сохранённый таймер > Выход"
+			SetChars(17, 9, 21, 23, 20, 4); //  "т", "й", "ы", "...", "Ы", "Д"
+
+			lcd.setCursor(0, 0);
+			lcd.print(F("m>\1a\2mep\3>"));
+
+			lcd.setCursor(10, 0);
+			lcd.print(ReadTimer(valTimerNum, 1) < 10 ? "0" : "");
+			lcd.print(ReadTimer(valTimerNum, 1));
+			lcd.print(":");
+
+			lcd.setCursor(13, 0);
+			lcd.print(ReadTimer(valTimerNum, 2) < 10 ? "0" : "");
+			lcd.print(ReadTimer(valTimerNum, 2));
+			lcd.print("\4");
+
+			lcd.setCursor(0, 1);
+			lcd.print(F("<    B\5XO\6     >"));
+			break;
+
+		case 12:  //  Меню "Таймеры > Новый таймер"
+			SetChars(15, 25, 17, 9, 21, 8, 20); // "н", "ю", "т", "й", "ы", "Й", "Ы"
+
+			lcd.setCursor(0, 0);
+			lcd.print(F("me\1\2>\3a\4mep\5:"));
+
+			lcd.setCursor(0, 1);
+			lcd.print(F("< HOB\7\6 TA\6MEP >"));
+
+			break;
+
+		case 121: //  Меню "Таймеры > Новый таймер > Новый таймер создан"
+			SetChars(20, 8, 4); //  "Ы", "Й", "Д"
+
+			lcd.setCursor(2, 0);
+			lcd.print(F("HOB\1\2 TA\2MEP"));
+
+			lcd.setCursor(5, 1); lcd.print(F("CO3\3AH"));
+
+			break;
+
+		case 13:  // Меню "Таймеры > Стереть всё"
+			SetChars(11, 15, 25, 17, 9, 21, 22);  //  "м", "н", "ю", "т", "й", "ы", "Ь"
+
+			lcd.setCursor(0, 0);
+			lcd.print(F("\1e\2\3>\4a\5\1ep\6:"));
+
+			lcd.setCursor(0, 1);
+			lcd.print(F("< CTEPET\7 BCE  >"));
+
+			break;
+
+		case 131: // Меню "Таймеры > Стереть всё > Все данные стёрты"
+			SetChars(20, 8, 4, 16, 12); //  "Ы", "Й", "Д", "У", "Л"
+
+			lcd.setCursor(2, 0);
+			lcd.print(F("BCE TA\2MEP\1"));
+
+			lcd.setCursor(4, 1);
+			lcd.print(F("\4\3A\5EH\1"));
+			break;
+
+		case 14:  // Меню "Таймеры > Выход"
+			SetChars(15, 25, 17, 9, 21, 4, 20); // "н", "ю", "т", "й", "ы", "Д", "Ы"
+
+			lcd.setCursor(0, 0);
+			lcd.print(F("me\1\2>\3a\4mep\5:"));
+
+			lcd.setCursor(0, 1);
+			lcd.print(F("<    B\7XO\6     >"));
+
+			break;
+
+		case  2:  //  Меню "Часы"
+			SetChars(11, 15, 25, 18, 20);   // "м", "н", "ю", "Ч", "Ы"
+
+			lcd.setCursor(0, 0);
+			lcd.print(F("\1e\2\3:"));
+
+			lcd.setCursor(0, 1);
+			lcd.print(F("<     \4AC\5     >"));
+			break;
+
+		case 21:  //  Меню "Часы > Время"
+			SetChars(11, 15, 25, 19, 21, 26); //  "м", "н", "ю", "ч", "ы", "Я"
+
+			lcd.setCursor(0, 0);
+			lcd.print(F("\1e\2\3>\4ac\5:"));
+
+			lcd.setCursor(0, 1);
+			lcd.print(F("<    BPEM\6     >"));
+			break;
+
+		case 211: //  Меню "Часы > Время > Установка времени"
+			SetChars(11, 15, 25, 19, 21, 1, 27);  //  "м", "н", "ю", "ч", "ы", "в", "я"
+
+			lcd.setCursor(0, 0);
+			lcd.print(F("\1e\2\3>\4ac\5>\6pe\1\7:"));
+
+			lcd.setCursor(4, 1);
+			valChar[0] = valArray[0] / 10 + 48;
+			valChar[1] = valArray[0] % 10 + 48;
+			valChar[2] = 0;
+			lcd.print((millis() % 1000 < 500 && valSubMode == 0) ? "  " : valChar);
+			lcd.print(":");
+
+			lcd.setCursor(7, 1);
+			valChar[0] = valArray[1] / 10 + 48;
+			valChar[1] = valArray[1] % 10 + 48;
+			valChar[2] = 0;
+			lcd.print((millis() % 1000 < 500 && valSubMode == 1) ? "  " : valChar);
+			lcd.print(":");
+
+			lcd.setCursor(10, 1);
+			valChar[0] = valArray[2] / 10 + 48;
+			valChar[1] = valArray[2] % 10 + 48;
+			valChar[2] = 0;
+			lcd.print((millis() % 1000 < 500 && valSubMode == 2) ? "  " : valChar);
+			break;
+
+		case 22:  //  Меню "Часы > Дата"
+			SetChars(11, 15, 25, 19, 21, 4);  //  "м", "н", "ю", "ч", "ы", "Д"
+
+			lcd.setCursor(0, 0);
+			lcd.print(F("\1e\2\3>\4ac\5:"));
+
+			lcd.setCursor(0, 1);
+			lcd.print(F("<     \6ATA     >"));
+			break;
+
+		case 221: //  Меню "Часы > Дата > Установка даты"
+			SetChars(24, 18, 20, 4);  //  "Ю", "Ч", "Ы", "Д"
+
+			lcd.setCursor(0, 0);
+			lcd.print(F("MEH\1>\2AC\3>\4ATA:"));
+
+			lcd.setCursor(3, 1);
+			valChar[0] = valArray[0] / 10 + 48;
+			valChar[1] = valArray[0] % 10 + 48;
+			valChar[2] = 0;
+			lcd.print((millis() % 1000 < 500 && valSubMode == 0) ? "  " : valChar);
+			lcd.print(".");
+
+			lcd.setCursor(6, 1);
+			valChar[0] = valArray[1] / 10 + 48;
+			valChar[1] = valArray[1] % 10 + 48;
+			valChar[2] = 0;
+			lcd.print((millis() % 1000 < 500 && valSubMode == 1) ? "  " : valChar);
+			lcd.print(".");
+
+			lcd.setCursor(9, 1);
+			valChar[0] = '2';
+			valChar[1] = '0';
+			valChar[2] = valArray[2] / 10 + 48;
+			valChar[3] = valArray[2] % 10 + 48;
+			valChar[4] = 0;
+			lcd.print((millis() % 1000 < 500 && valSubMode == 2) ? "    " : valChar);
+			break;
+
+		case 23:  //  Меню "Часы > Выход"
+			SetChars(11, 15, 25, 19, 21, 4, 20);  //  "м", "н", "ю", "ч", "ы", "Д", "Ы"
+
+			lcd.setCursor(0, 0);
+			lcd.print(F("\1e\2\3>\4ac\5:"));
+
+			lcd.setCursor(0, 1);
+			lcd.print(F("<    B\7XO\6     >"));
+			break;
+
+		case  3:  //  Меню "Выход"
+			SetChars(11, 15, 25, 4, 20);  // "м", "н", "ю", "Д", "Ы"
+
+			lcd.setCursor(0, 0);
+			lcd.print(F("\1e\2\3:"));
+
+			lcd.setCursor(0, 1);
+			lcd.print(F("<    B\5XO\4     >"));
 			break;
 
 		case 4:    //  Меню "Работа с ПК"
@@ -1139,6 +1134,17 @@ void displayUpdate() {
 			lcd.setCursor(0, 1);
 			lcd.print(F("    \3\1A\4EH\2     "));
 			break;
+
+		case 5:	//	Обработка ошибок
+			SetChars(4, 20);   // "Д", "Ы"
+
+			lcd.setCursor(0, 0);
+			lcd.print(F("BBE\1EH\2 HEBEPH\2E"));
+
+			lcd.setCursor(0, 1);
+			lcd.print(F("     \1AHH\2E     "));
+			break;
+
 		}
 	}
 }
@@ -1292,6 +1298,10 @@ void clickButtonOK() {
 	pressedButton = 2;
 }
 
+void dblClickButtonOK() {
+	pressedButton = 4;
+}
+
 void proveVoltage() {
 #if defined(__AVR_ATmega32U4__) || defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
 	ADMUX = _BV(REFS0) | _BV(MUX4) | _BV(MUX3) | _BV(MUX2) | _BV(MUX1);
@@ -1317,6 +1327,7 @@ void proveVoltage() {
 
 }
 
+//	Сдвиг расписаний после удаления расписания внутри
 void shift()
 {
 	for (int k = valArray[0]; k < valArray[1]; k++) {
@@ -1327,6 +1338,7 @@ void shift()
 	SaveTimer(valArray[1]);
 }
 
+//	Выдача информации из EEPROM
 void viewEEPROM() {
 	valByte = EEPROM.read(numByte);
 
@@ -1342,6 +1354,62 @@ void viewEEPROM() {
 	delay(500);
 }
 
+//	Добавление или изменение расписания по запросу с ПК
+void editData(String sender) {
+	if (Serial.available() > 0) {
+		String value;
+		value = Serial.readStringUntil('\n');
+		valTimerNum = value.substring(0, 1).toInt();
+
+		SaveTimer(valTimerNum, 0, 1);
+		SaveTimer(valTimerNum, 1, uint8_t(value.substring(2, 4).toInt()));
+		SaveTimer(valTimerNum, 2, uint8_t(value.substring(5, 7).toInt()));
+		SaveTimer(valTimerNum, 3, uint8_t(value.substring(8, 10).toInt()));
+		SaveTimer(valTimerNum, 4, uint8_t(value.substring(11, 13).toInt()));
+		SaveTimer(valTimerNum, 5, uint8_t(value.substring(14, 15).toInt()));
+		SaveTimer(valTimerNum, 6, uint8_t(value.substring(16).toInt()));
+		Serial.println(sender);
+		valTimerNum = 0;
+	}
+}
+
+//	Проверка правильности даты
+bool checkDate()
+{
+	switch (valArray[1])
+	{
+	case 1:
+	case 3:
+	case 5:
+	case 7:
+	case 8:
+	case 10:
+	case 12:
+		return checkDay(31);
+	case 2:
+		if (valArray[2] % 4 == 0 && (valArray[2] % 100 != 0 || valArray[2] % 400 == 0))
+			return checkDay(29);
+		else
+			return checkDay(28);
+	case 4:
+	case 6:
+	case 9:
+	case 11:
+		return checkDay(30);
+	default:
+		return false;
+	}
+}
+
+//	Проверка правильности введённой даты в зависимости от месяца
+bool checkDay(int count) {
+	if (valArray[0] <= count)
+		return true;
+	else
+		return false;
+}
+
+//	Переключение режимов в зависимости от задачи с ПК
 int proveSP()
 {
 	if (connectPC) {
