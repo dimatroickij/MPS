@@ -281,17 +281,28 @@ void buttonRead(void) {
 			else if (valSubMode == 4) { valSubMode = 5; }
 			else if (valSubMode == 5) { valSubMode = 6; }
 			else if (valSubMode == 6) {
-				j = 112;
-				uint8_t k = 0;
-				bitWrite(k, 6, valArray[0]);
-				bitWrite(k, 5, valArray[1]);
-				bitWrite(k, 4, valArray[2]);
-				bitWrite(k, 3, valArray[3]);
-				bitWrite(k, 2, valArray[4]);
-				bitWrite(k, 1, valArray[5]);
-				bitWrite(k, 0, valArray[6]);
-				SaveTimer(valTimerNum, 6, k);
-				lcd.noBlink();
+				int summ = 0;
+				for (int jj = 0; jj < 7; jj++)
+					summ += valArray[jj];
+				if (summ != 0)
+				{
+					j = 112;
+					uint8_t k = 0;
+					bitWrite(k, 6, valArray[0]);
+					bitWrite(k, 5, valArray[1]);
+					bitWrite(k, 4, valArray[2]);
+					bitWrite(k, 3, valArray[3]);
+					bitWrite(k, 2, valArray[4]);
+					bitWrite(k, 1, valArray[5]);
+					bitWrite(k, 0, valArray[6]);
+					SaveTimer(valTimerNum, 6, k);
+					lcd.noBlink();
+				}
+				else
+				{
+					j = 5;
+					valSubMode = 1121;
+				}
 			}
 		}
 		if ((pressedButton == BACK) || (pressedButton == NEXT)) {
