@@ -6,15 +6,13 @@
 #include <LiquidCrystal_I2C.h>                                       //  Подключаем библиотеку для работы с LCD дисплеем по шине I2C
 
 
-#define    OK    2
-#define     BACK  1
-#define     NEXT  3
+#define		OK		2
+#define     BACK	1
+#define     NEXT	3
+#define		COUNT	4	//	Количество релейных модулей
 
 //  ВЫВОДЫ ARDUINO  //
-const uint8_t relay1 = 5;   //  Вывод на 1 реле
-const uint8_t relay2 = 6;   //  Вывод на 2 реле
-const uint8_t relay3 = 9;   //  Вывод на 3 реле
-const uint8_t relay4 = 10;  //  Вывод на 4 реле
+const uint8_t relays[COUNT] = { 5, 6, 9, 10 };	//	Выводы реле
 const uint8_t buzzer = 12;  //  Пьезо пищалка
 
 //   КОНСТАНТЫ И ПЕРЕМЕННЫЕ, НЕОБХОДИМЫЕ ДЛЯ РАБОТЫ СКЕТЧА: //
@@ -44,7 +42,8 @@ const byte      rusMem[40][8] PROGMEM = {
 
 const int maxTimers = 145;           //  Максимальное количество расписаний (максимум 145)
 int     pressedButton = 0;          //  Нажатая кнопка
-uint8_t   valArray[7] = { 0,0,0,0,0,0,0 };  //  Определяем массив элементы которого будут хранить различную информацию в зависимости от режима
+uint8_t   valArray[9] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };	//  Определяем массив элементы которого будут хранить различную информацию в зависимости от режима
+
 char    valChar[5] = "    ";        //  Определяем массив символов (строку) информация которой будет отображаться на дисплее мигая
 int     valMode = 0;            //  Текущий режим
 int   valSubMode = 0;           //  Текущий подрежим
@@ -87,17 +86,13 @@ void setup() {
 	Serial.begin(9600);
 
 	//  Выводы на реле и пищалку в режим выхода //
-	pinMode(relay1, OUTPUT);
-	pinMode(relay2, OUTPUT);
-	pinMode(relay3, OUTPUT);
-	pinMode(relay4, OUTPUT);
-	pinMode(buzzer, OUTPUT);
+	for (int i = 0; i < COUNT; i++)
+	{
+		pinMode(relays[i], OUTPUT);
+		digitalWrite(relays[i], HIGH);
+	}
 
-	//  Выводы на реле в высокое состояние (отключение реле)  //
-	digitalWrite(relay1, HIGH);
-	digitalWrite(relay2, HIGH);
-	digitalWrite(relay3, HIGH);
-	digitalWrite(relay4, HIGH);
+	pinMode(buzzer, OUTPUT);
 
 	time.begin();
 	lcd.init();
@@ -107,7 +102,6 @@ void setup() {
 	buttonBack.attachClick(clickButtonBack);
 	buttonNext.attachClick(clickButtonNext);
 	buttonOk.attachClick(clickButtonOK);
-	buttonOk.attachDoubleClick(dblClickButtonOK);
 	SetChars(16, 26, 14, 6, 38, 8, 4);    //  "У", "Я", "П", "И", "Ц", "Й", "Д"
 	lcd.setCursor(0, 0);
 	lcd.print(F("K\1PCOBA\2 \3O M\3C"));
@@ -148,7 +142,7 @@ void loop() {
 
 //  ФУНКЦИЯ, ВЫПОЛНЯЮЩАЯ УПРАВЛЕНИЕ РЕЖИМАМИ В ЗАВИСИМОСТИ ОТ НАЖАТОЙ КНОПКИ  //
 void buttonRead(void) {
-	int j = 4000; //  Режим, в который переходит программа (3000 - остаться в том же режиме)
+	int j = 4000; //  Режим, в который переходит программа (4000 - остаться в том же режиме)
 	switch (valMode) {
 
 	case  0:  //  Главное меню
@@ -199,11 +193,8 @@ void buttonRead(void) {
 		if (pressedButton == OK) {
 			j = 1111;
 			valSubMode = 0;
-			valArray[0] = ReadTimer(valTimerNum, 1);  //  Час начального времени
-			valArray[1] = ReadTimer(valTimerNum, 2);  //  Минуты начального времени
-			valArray[2] = ReadTimer(valTimerNum, 3);  //  Час конечного времени
-			valArray[3] = ReadTimer(valTimerNum, 4);  //  Минуты конечного времени
-			valArray[4] = ReadTimer(valTimerNum, 5);  //  Номер таймера
+			for (int i = 1; i < 6; i++)
+				valArray[i - 1] = ReadTimer(valTimerNum, i);
 		}
 		if (pressedButton == BACK) { j = 114; }
 		if (pressedButton == NEXT) { j = 112; }
@@ -226,11 +217,8 @@ void buttonRead(void) {
 				{
 					j = 111;
 					SaveTimer(valTimerNum, 0, 1);
-					SaveTimer(valTimerNum, 1, valArray[0]);
-					SaveTimer(valTimerNum, 2, valArray[1]);
-					SaveTimer(valTimerNum, 3, valArray[2]);
-					SaveTimer(valTimerNum, 4, valArray[3]);
-					SaveTimer(valTimerNum, 5, valArray[4]);
+					for (int i = 1; i < 6; i++)
+						SaveTimer(valTimerNum, i, valArray[i - 1]);
 				}
 			}
 		}
@@ -240,7 +228,7 @@ void buttonRead(void) {
 			if (valArray[1] > 59) { valArray[1] = 59; }
 			if (valArray[2] > 23) { valArray[2] = 23; }
 			if (valArray[3] > 59) { valArray[3] = 59; }
-			if (valArray[4] == 0) { valArray[4] = 4; }
+			if (valArray[4] == 0) { valArray[4] = COUNT; }
 		}
 		if (pressedButton == NEXT) {
 			valArray[valSubMode]++;
@@ -248,7 +236,7 @@ void buttonRead(void) {
 			if (valArray[1] > 59) { valArray[1] = 0; }
 			if (valArray[2] > 23) { valArray[2] = 0; }
 			if (valArray[3] > 59) { valArray[3] = 0; }
-			if (valArray[4] > 4) { valArray[4] = 1; }
+			if (valArray[4] > COUNT) { valArray[4] = 1; }
 		}
 		flgDisplayUpdate = 1;
 		pressedButton = 0;
@@ -258,13 +246,8 @@ void buttonRead(void) {
 		if (pressedButton == OK) {
 			j = 1121;
 			valSubMode = 0;
-			valArray[0] = bitRead(ReadTimer(valTimerNum, 6), 6);
-			valArray[1] = bitRead(ReadTimer(valTimerNum, 6), 5);
-			valArray[2] = bitRead(ReadTimer(valTimerNum, 6), 4);
-			valArray[3] = bitRead(ReadTimer(valTimerNum, 6), 3);
-			valArray[4] = bitRead(ReadTimer(valTimerNum, 6), 2);
-			valArray[5] = bitRead(ReadTimer(valTimerNum, 6), 1);
-			valArray[6] = bitRead(ReadTimer(valTimerNum, 6), 0);
+			for (int i = 0; i < 7; i++)
+				valArray[i] = bitRead(ReadTimer(valTimerNum, 6), 6 - i);
 		}
 		if (pressedButton == BACK) { j = 111; }
 		if (pressedButton == NEXT) { j = 113; }
@@ -288,13 +271,8 @@ void buttonRead(void) {
 				{
 					j = 112;
 					uint8_t k = 0;
-					bitWrite(k, 6, valArray[0]);
-					bitWrite(k, 5, valArray[1]);
-					bitWrite(k, 4, valArray[2]);
-					bitWrite(k, 3, valArray[3]);
-					bitWrite(k, 2, valArray[4]);
-					bitWrite(k, 1, valArray[5]);
-					bitWrite(k, 0, valArray[6]);
+					for (int i = 0; i < 7; i++)
+						bitWrite(k, 6 - i, valArray[i]);
 					SaveTimer(valTimerNum, 6, k);
 					lcd.noBlink();
 				}
@@ -371,7 +349,8 @@ void buttonRead(void) {
 		j = 1111;
 		valTimerNum = FindTimer();
 		valSubMode = 0;
-		valArray[0] = valArray[1] = valArray[2] = valArray[3] = 0;
+		for (int i = 0; i < 4; i++)
+			valArray[i] = 0;
 		valArray[4] = 1;
 		SaveTimer(valTimerNum, 0, 1);
 		SaveTimer(valTimerNum, 1);
@@ -493,7 +472,8 @@ void buttonRead(void) {
 					R = 7000 + (valArray[0] + y + y / 4 - y / 100 + y / 400 + (31 * m) / 12);
 					valArray[3] = R % 7;
 					time.settime(-1, -1, -1, valArray[0], valArray[1], valArray[2], valArray[3]);
-					valArray[0] = valArray[1] = valArray[2] = valArray[3] = 0;
+					for (int i = 0; i < 4; i++)
+						valArray[i] = 0;
 					j = 22;
 				}
 				else {
@@ -528,7 +508,8 @@ void buttonRead(void) {
 	case  3:  //  Меню "Выход"
 		if (pressedButton == OK) {
 			j = 0;
-			valArray[0] = valArray[1] = valArray[2] = valArray[3] = 0;
+			for (int i = 0; i < 4; i++)
+				valArray[i] = 0;
 			while (Serial.available()) Serial.read();
 		}
 		if (pressedButton == BACK) { j = 2; }
@@ -682,9 +663,20 @@ void displayUpdate() {
 					(time.weekday == 5 ? "\7T" :
 						(time.weekday == 6 ? "C\6" : ("BC")))))));
 
-			lcd.setCursor(12, 0);
-			lcd.print("    ");
-			valArray[4] = 15;
+			lcd.setCursor(8, 0);
+			lcd.print("        ");
+
+			valArray[COUNT] = 15;
+			for (int i = COUNT - 1; i >= 0; i--)
+			{
+				if (valArray[i]) {
+					lcd.setCursor(valArray[COUNT], 0);
+					lcd.print(String(i + 1));
+					valArray[COUNT]--;
+				}
+			}
+
+			/*valArray[4] = 15;
 			if (valArray[3]) {
 				lcd.setCursor(valArray[4], 0);
 				lcd.print("\4");
@@ -704,7 +696,7 @@ void displayUpdate() {
 				lcd.setCursor(valArray[4], 0);
 				lcd.print("\1");
 				valArray[4]--;
-			}
+			}*/
 			break;
 
 		case  1:  //  Меню "Таймеры"
@@ -831,26 +823,11 @@ void displayUpdate() {
 			lcd.setCursor(1, 0);
 			lcd.print("\1 \2 \3 \4 \5 \6 \7");
 
-			lcd.setCursor(1, 1);
-			lcd.print(valArray[0] ? "^" : " ");
-
-			lcd.setCursor(3, 1);
-			lcd.print(valArray[1] ? "^" : " ");
-
-			lcd.setCursor(5, 1);
-			lcd.print(valArray[2] ? "^" : " ");
-
-			lcd.setCursor(7, 1);
-			lcd.print(valArray[3] ? "^" : " ");
-
-			lcd.setCursor(9, 1);
-			lcd.print(valArray[4] ? "^" : " ");
-
-			lcd.setCursor(11, 1);
-			lcd.print(valArray[5] ? "^" : " ");
-
-			lcd.setCursor(13, 1);
-			lcd.print(valArray[6] ? "^" : " ");
+			for (int i = 0; i < 7; i++)
+			{
+				lcd.setCursor(1 + 2 * i, 1);
+				lcd.print(valArray[i] ? "^" : " ");
+			}
 
 			lcd.setCursor(valSubMode * 2 + 1, 1);
 			lcd.blink();
@@ -1191,14 +1168,25 @@ void displayUpdate() {
 
 //  ФУНКЦИЯ, КОТОРАЯ ВКЛЮЧАЕТ НУЖНОЕ РЕЛЕ В ЗАВИСИМОСТИ ОТ РАСПИСАНИЯ
 void setRelay(void) {
-	static uint8_t setChanel[4] = { 0, 0, 0, 0 }; //  Установить: Включённое (1) или выключенное (0) реле
+	uint8_t setChanel[COUNT];	//  Установить: Включённое (1) или выключенное (0) реле
+	for (int i = 0; i < COUNT; i++)
+	{
+		setChanel[i] = 0;
+	}
+
+	//	Если главное меню ...
 	if (valMode == 0) {
-		uint8_t  getChanel[4] = { 0,0,0,0 };  //  Чтение: Включённое (1) или выключенное (0) реле
+		uint8_t  getChanel[COUNT];	//  Чтение: Включённое (1) или выключенное (0) реле
+		for (int i = 0; i < COUNT; i++)
+		{
+			getChanel[i] = 0;
+			valArray[i] = 0;
+		}
 		uint32_t timeRTC = 0;     //  Текущее время в секундах от 00:00:00
 		uint32_t timeTimerStart = 0;  //  Стартовое время в секундах от 00:00:00 (для цикла)
 		uint32_t timeTimerStop = 0;   //  Конечное время в секундах от 00:00:00 (для цикла)
 		uint8_t  timeWeekday = 0;   //  Текущей день недели в формате: 1 - ПН, 2 - ВТ, 3 - СР, 4 - ЧТ, 5 - ПТ, 6 - СБ, 7 - ВС
-		valArray[0] = valArray[1] = valArray[2] = valArray[3] = 0;
+
 		timeRTC = (uint32_t)time.Hours * 3600 + time.minutes * 60 + time.seconds;
 		timeWeekday = time.weekday;
 
@@ -1221,41 +1209,19 @@ void setRelay(void) {
 			}
 		}
 
-		// Включение / выключение 1 реле
-		if (setChanel[0] != getChanel[0]) {
-			setChanel[0] = getChanel[0];
-			if (getChanel[0])
-				digitalWrite(relay1, LOW);
-			else
-				digitalWrite(relay1, HIGH);
+		// Включение / выключение релейных модулей
+		for (int i = 0; i < COUNT; i++)
+		{
+			if (setChanel[i] != getChanel[i]) {
+				setChanel[i] = getChanel[i];
+				if (getChanel[i])
+					digitalWrite(relays[i], LOW);
+				else
+					digitalWrite(relays[i], HIGH);
+			}
 		}
-
-		// Включение / выключение 2 реле
-		if (setChanel[1] != getChanel[1]) {
-			setChanel[1] = getChanel[1];
-			if (getChanel[1])
-				digitalWrite(relay2, LOW);
-			else
-				digitalWrite(relay2, HIGH);
-		}
-
-		// Включение / выключение 3 реле
-		if (setChanel[2] != getChanel[2]) {
-			setChanel[2] = getChanel[2];
-			if (getChanel[2])
-				digitalWrite(relay3, LOW);
-			else
-				digitalWrite(relay3, HIGH);
-		}
-
-		// Включение / выключение 4 реле
-		if (setChanel[3] != getChanel[3]) {
-			setChanel[3] = getChanel[3];
-			if (getChanel[3])
-				digitalWrite(relay4, LOW);
-			else
-				digitalWrite(relay4, HIGH);
-		}
+		Serial.println(String(setChanel[0]) + String(setChanel[1]) + String(setChanel[2]) + String(setChanel[3]));
+		Serial.println(String(getChanel[0]) + String(getChanel[1]) + String(getChanel[2]) + String(getChanel[3]));
 	}
 }
 
@@ -1336,10 +1302,6 @@ void clickButtonNext() {
 
 void clickButtonOK() {
 	pressedButton = 2;
-}
-
-void dblClickButtonOK() {
-	pressedButton = 4;
 }
 
 void proveVoltage() {
