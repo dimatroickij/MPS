@@ -152,7 +152,6 @@ void buttonRead(void) {
 	switch (valMode) {
 
 	case  0:  //  Главное меню
-
 		if (pressedButton == OK) { j = 1; }
 		if (Serial.available() > 0)
 		{
@@ -185,6 +184,7 @@ void buttonRead(void) {
 		if (pressedButton == OK) {
 			j = 0;
 			valArray[0] = valArray[1] = valArray[2] = valArray[3] = 0;
+			while (Serial.available()) Serial.read();
 		}
 		if (pressedButton == BACK) { j = 2; }
 		if (pressedButton == NEXT) { j = 1; }
