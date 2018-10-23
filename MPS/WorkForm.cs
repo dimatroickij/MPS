@@ -116,7 +116,8 @@ namespace MPS
                                     List<Record> mas2 =
                                         mas1.FindAll(rec =>
                                         ((saveRecord.StartTimeUnix < rec.EndTimeUnix) && (saveRecord.StartTimeUnix >= rec.StartTimeUnix)) ||
-                                        ((saveRecord.EndTimeUnix > rec.StartTimeUnix) && (saveRecord.EndTimeUnix <= rec.EndTimeUnix))
+                                        ((saveRecord.EndTimeUnix > rec.StartTimeUnix) && (saveRecord.EndTimeUnix <= rec.EndTimeUnix)) ||
+                                        ((saveRecord.StartTimeUnix < rec.StartTimeUnix) && (saveRecord.EndTimeUnix > rec.EndTimeUnix))
                                         );
                                     if (mas2.Count == 0)
                                     {
@@ -156,7 +157,8 @@ namespace MPS
                                     List<Record> mas2 =
                                         mas1.FindAll(rec =>
                                        ((saveRecord.StartTimeUnix < rec.EndTimeUnix) && (saveRecord.StartTimeUnix >= rec.StartTimeUnix)) ||
-                                        ((saveRecord.EndTimeUnix > rec.StartTimeUnix) && (saveRecord.EndTimeUnix <= rec.EndTimeUnix))
+                                        ((saveRecord.EndTimeUnix > rec.StartTimeUnix) && (saveRecord.EndTimeUnix <= rec.EndTimeUnix)) ||
+                                        ((saveRecord.StartTimeUnix < rec.StartTimeUnix) && (saveRecord.EndTimeUnix > rec.EndTimeUnix))
                                         );
                                     if (mas2.Count == 0)
                                     {

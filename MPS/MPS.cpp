@@ -25,9 +25,9 @@ const byte      rusMem[40][8] PROGMEM = {
   { 31, 16, 16, 16, 16, 16, 16, 0 }, { 0, 0, 30, 16, 16, 16, 16, 0 }, //  Г,  г,  № матрицы символа в массиве: 02, 03
   { 6, 10, 10, 10, 10, 10, 31, 17 }, { 10, 10, 14, 2, 2, 0, 0, 0 },   //  Д,  4,  № матрицы символа в массиве: 04, 05
   { 17, 17, 17, 19, 21, 25, 17, 0 }, {31, 2, 4, 2, 1, 17, 14, 0 },    //  И,  З,  № матрицы символа в массиве: 06, 07
-  { 21, 17, 17, 19, 21, 25, 17, 0 }, { 10,4,17,19,21,25,17, 0 },    //  Й,  й,  № матрицы символа в массиве: 08, 09
-  { 0, 0, 18, 20, 24, 20, 18, 0 }, { 0, 0,17,27,21,17,17, 0 },      //  к,  м,  № матрицы символа в массиве: 10, 11
-  { 7, 9, 9, 9, 9, 9, 17, 0 }, { 0, 0, 7, 9, 9, 9,17, 0 },        //  Л,  л,  № матрицы символа в массиве: 12, 13
+  { 21, 17, 17, 19, 21, 25, 17, 0 }, { 10, 4, 17, 19, 21, 25, 17, 0 },    //  Й,  й,  № матрицы символа в массиве: 08, 09
+  { 0, 0, 18, 20, 24, 20, 18, 0 }, { 0, 0, 17, 27, 21, 17, 17, 0 },      //  к,  м,  № матрицы символа в массиве: 10, 11
+  { 7, 9, 9, 9, 9, 9, 17, 0 }, { 31, 4, 4, 4, 4, 4, 4, 0 },        //  Л,  Т,  № матрицы символа в массиве: 12, 13
   { 31, 17, 17, 17, 17, 17, 17, 0 }, { 0, 0, 17, 17, 31, 17, 17, 0 }, //  П   н,  № матрицы символа в массиве: 14, 15
   { 17, 17, 17, 15, 1, 17, 14, 0 }, { 0, 0, 31, 4, 4, 4, 4, 0 },    //  У,  т,  № матрицы символа в массиве: 16, 17
   { 17, 17, 17, 15, 1, 1, 1, 0 }, { 0, 0, 17, 17, 15, 1, 1, 0 },    //  Ч,  ч,  № матрицы символа в массиве: 18, 19
@@ -343,7 +343,13 @@ void buttonRead(void) {
 		break;
 
 	case 114: //  Меню "Таймеры > сохранённый таймер > Выход"
-		if (pressedButton == OK) { j = 11; }
+		if (pressedButton == OK)
+		{
+			if (dublicate(valTimerNum))
+				j = 6;
+			else
+				j = 11;
+		}
 		if (pressedButton == BACK) { j = 113; }
 		if (pressedButton == NEXT) { j = 111; }
 		pressedButton = 0;
@@ -634,6 +640,12 @@ void buttonRead(void) {
 		pressedButton = 0;
 		j = valSubMode;
 		valSubMode = 0;
+		break;
+
+	case 6:	//	Дубликат
+		delay(1000);
+		pressedButton = 0;
+		j = 111;
 		break;
 	}
 
@@ -1164,6 +1176,15 @@ void displayUpdate() {
 			lcd.print(F("     \1AHH\2E     "));
 			break;
 
+		case 6:	//	Дубликат
+			SetChars(4, 16, 0, 12, 6, 13, 20);   // "Д", "У", "Б", "Л", "И", "Т", "Ы"
+
+			lcd.setCursor(0, 0);
+			lcd.print(F("    \1\2\3\4\5KA\6    "));
+
+			lcd.setCursor(0, 1);
+			lcd.print(F("   \1AHH\7X !!!   "));
+			break;
 		}
 	}
 }
@@ -1426,6 +1447,35 @@ bool checkDay(int count) {
 		return true;
 	else
 		return false;
+}
+
+bool dublicate(uint8_t numTimer)
+{
+	int c = 0;
+	for (int i = 0; i < FindTimer(); i++)
+	{
+		int startTimeS = timeSec(ReadTimer(numTimer, 1), ReadTimer(numTimer, 2));
+		int endTimeS = timeSec(ReadTimer(numTimer, 3), ReadTimer(numTimer, 4));
+
+		int startTimeI = timeSec(ReadTimer(i, 1), ReadTimer(i, 2));
+		int endTimeI = timeSec(ReadTimer(i, 3), ReadTimer(i, 4));
+		if ((numTimer != i) && (ReadTimer(numTimer, 5) == ReadTimer(i, 5)) &&
+			(((startTimeS < endTimeI) && (startTimeS >= startTimeI)) ||
+			((endTimeS > startTimeI) && (endTimeS <= endTimeI)) ||
+				((startTimeS < startTimeI) && (endTimeS > endTimeI))
+				) && (ReadTimer(numTimer, 6) & ReadTimer(i, 6) != 0)
+			)
+			c++;
+	}
+	if (c != 0)
+		return true;
+	else
+		return false;
+}
+
+int timeSec(int t1, int t2)
+{
+	return t2 * 60 + t1 * 60 * 60;
 }
 
 //	Переключение режимов в зависимости от задачи с ПК
