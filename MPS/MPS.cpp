@@ -9,10 +9,10 @@
 #define		OK		2
 #define     BACK	1
 #define     NEXT	3
-#define		COUNT	4	//	Количество релейных модулей
+#define		COUNT	8	//	Количество релейных модулей
 
 //  ВЫВОДЫ ARDUINO  //
-const uint8_t relays[COUNT] = { 5, 6, 9, 10 };	//	Выводы реле
+const uint8_t relays[COUNT] = { 5, 6, 9, 10 , 2, 3, 4, 11};	//	Выводы реле
 const uint8_t buzzer = 12;  //  Пьезо пищалка
 
 //   КОНСТАНТЫ И ПЕРЕМЕННЫЕ, НЕОБХОДИМЫЕ ДЛЯ РАБОТЫ СКЕТЧА: //
@@ -55,7 +55,7 @@ bool  connectPC = false;
 uint8_t setChanel[COUNT];	//  Установить: Включённое (1) или выключенное (0) реле
 
 
-LiquidCrystal_I2C lcd(0x27, 16, 2);     //  Объект - lcd для работы с дисплеем (адрес I2C = 0x27, количество столбцов = 16, количество строк = 2)
+LiquidCrystal_I2C lcd(0x27/*0x3f для протеуса*/, 16, 2);     //  Объект - lcd для работы с дисплеем (адрес I2C = 0x27, количество столбцов = 16, количество строк = 2)
 iarduino_RTC    time(RTC_DS1307);     //  Объект - time для работы с часами RTC (тип модуля)
 OneButton buttonBack(14, 1);          //  Объект - кнопка "Назад" (№ пина, )
 OneButton buttonNext(15, 1);          //  Объект - кнопка "Вперёд" (№ пина, )
