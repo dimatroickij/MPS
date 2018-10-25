@@ -6,13 +6,13 @@
 #include <LiquidCrystal_I2C.h>                                       //  Подключаем библиотеку для работы с LCD дисплеем по шине I2C
 
 
-#define		OK		2
-#define     BACK	1
-#define     NEXT	3
-#define		COUNT	8	//	Количество релейных модулей
+#define    OK    2
+#define     BACK  1
+#define     NEXT  3
+#define   COUNT 8 //  Количество релейных модулей
 
 //  ВЫВОДЫ ARDUINO  //
-const uint8_t relays[COUNT] = { 2, 3, 4, 5, 6, 7, 8, 9 };	//	Выводы реле
+const uint8_t relays[COUNT] = { 2, 3, 4, 5, 6, 7, 8, 9 }; //  Выводы реле
 const uint8_t buzzer = 12;  //  Пьезо пищалка
 
 //   КОНСТАНТЫ И ПЕРЕМЕННЫЕ, НЕОБХОДИМЫЕ ДЛЯ РАБОТЫ СКЕТЧА: //
@@ -42,7 +42,7 @@ const byte      rusMem[40][8] PROGMEM = {
 
 const int maxTimers = 145;           //  Максимальное количество расписаний (максимум 145)
 int     pressedButton = 0;          //  Нажатая кнопка
-uint8_t   valArray[9] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };	//  Определяем массив элементы которого будут хранить различную информацию в зависимости от режима
+uint8_t   valArray[9] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };  //  Определяем массив элементы которого будут хранить различную информацию в зависимости от режима
 
 char    valChar[5] = "    ";        //  Определяем массив символов (строку) информация которой будет отображаться на дисплее мигая
 int     valMode = 0;            //  Текущий режим
@@ -52,10 +52,10 @@ bool    flgDisplayUpdate = 1;       //  Флаг обновления дисплея
 int     numByte = 0;            //  Номер байта EEPROM
 int     valByte;              //  Значение байта EEPROM
 bool  connectPC = false;
-uint8_t setChanel[COUNT];	//  Установить: Включённое (1) или выключенное (0) реле
+uint8_t setChanel[COUNT]; //  Установить: Включённое (1) или выключенное (0) реле
 
 
-LiquidCrystal_I2C lcd(0x27/*0x3f для протеуса*/, 16, 2);     //  Объект - lcd для работы с дисплеем (адрес I2C = 0x27, количество столбцов = 16, количество строк = 2)
+LiquidCrystal_I2C lcd(0x3F/*0x27*//*0x3f для протеуса*/, 16, 2);     //  Объект - lcd для работы с дисплеем (адрес I2C = 0x27, количество столбцов = 16, количество строк = 2)
 iarduino_RTC    time(RTC_DS1307);     //  Объект - time для работы с часами RTC (тип модуля)
 OneButton buttonBack(14, 1);          //  Объект - кнопка "Назад" (№ пина, )
 OneButton buttonNext(15, 1);          //  Объект - кнопка "Вперёд" (№ пина, )
@@ -150,7 +150,7 @@ void buttonRead(void) {
 
 	case  0:  //  Главное меню
 		if (pressedButton == OK) { j = 1; }
-		if (Serial.available() > 0)
+		else if (Serial.available() > 0)
 		{
 			char s = Serial.read();
 			if (s == 'c')
@@ -585,7 +585,7 @@ void buttonRead(void) {
 		j = 4;
 		break;
 
-	case 44:	// Меню "Изменение данных расписания"
+	case 44:  // Меню "Изменение данных расписания"
 		editData("endEdit");
 		j = 441;
 		pressedButton = 0;
@@ -597,7 +597,7 @@ void buttonRead(void) {
 		j = 4;
 		break;
 
-	case 45:	// Меню "Удаление расписания"
+	case 45:  // Меню "Удаление расписания"
 		if (Serial.available() > 0)
 		{
 			String value;
@@ -619,14 +619,14 @@ void buttonRead(void) {
 		j = 4;
 		break;
 
-	case 5:	//	Обработка ошибок
+	case 5: //  Обработка ошибок
 		delay(1000);
 		pressedButton = 0;
 		j = valSubMode;
 		valSubMode = 0;
 		break;
 
-	case 6:	//	Дубликат
+	case 6: //  Дубликат
 		delay(1000);
 		pressedButton = 0;
 		j = 111;
@@ -1034,7 +1034,7 @@ void displayUpdate() {
 			lcd.print(F("  PA\5OTA C \4K   "));
 			break;
 
-		case 41:	//  Меню "Установка соединения"
+		case 41:  //  Меню "Установка соединения"
 			SetChars(16, 4, 6, 26);   // "У", "Д", "И", "Я"
 
 			lcd.setCursor(0, 0);
@@ -1044,7 +1044,7 @@ void displayUpdate() {
 			lcd.print(F("      ....      "));
 			break;
 
-		case 411:	//  Меню "Соединение установлено"
+		case 411: //  Меню "Соединение установлено"
 			SetChars(4, 6, 16, 12);   // "Д", "И", "У", "Л"
 
 			lcd.setCursor(0, 0);
@@ -1054,7 +1054,7 @@ void displayUpdate() {
 			lcd.print(F("  \3CTAHOB\4EHO   "));
 			break;
 
-		case 42:	//  Меню "Передача данных на ПК"
+		case 42:  //  Меню "Передача данных на ПК"
 			SetChars(14, 4, 18, 20);   // "П", "Д", "Ч", "Ы"
 
 			lcd.setCursor(0, 0);
@@ -1064,7 +1064,7 @@ void displayUpdate() {
 			lcd.print(F("      ....      "));
 			break;
 
-		case 43:	//  Меню "Получение данных с ПК"
+		case 43:  //  Меню "Получение данных с ПК"
 			SetChars(14, 12, 16, 18, 6, 4, 20);   // "П", "Л", "У", "Ч", "И", "Д", "Ы"
 
 			lcd.setCursor(0, 0);
@@ -1074,7 +1074,7 @@ void displayUpdate() {
 			lcd.print(F("      ....      "));
 			break;
 
-		case 431:	//  Меню "Данные сохранены"
+		case 431: //  Меню "Данные сохранены"
 			SetChars(4, 20);   // "Д", "Ы"
 
 			lcd.setCursor(0, 0);
@@ -1084,7 +1084,7 @@ void displayUpdate() {
 			lcd.print(F("   COXPAHEH\2    "));
 			break;
 
-		case 44:	// Меню "Изменение данных расписания"
+		case 44:  // Меню "Изменение данных расписания"
 			SetChars(6, 7, 4, 20);   // "И", "З", "Д", "Ы"
 
 			lcd.setCursor(0, 0);
@@ -1105,7 +1105,7 @@ void displayUpdate() {
 			break;
 
 
-		case 45:	// Меню "Удаление расписания"
+		case 45:  // Меню "Удаление расписания"
 			SetChars(16, 4, 12, 6, 20);   // "У", "Д", "З", "Д", "Ы"
 
 			lcd.setCursor(0, 0);
@@ -1125,7 +1125,7 @@ void displayUpdate() {
 			lcd.print(F("    \3\1A\4EH\2     "));
 			break;
 
-		case 5:	//	Обработка ошибок
+		case 5: //  Обработка ошибок
 			SetChars(4, 20);   // "Д", "Ы"
 
 			lcd.setCursor(0, 0);
@@ -1135,7 +1135,7 @@ void displayUpdate() {
 			lcd.print(F("     \1AHH\2E     "));
 			break;
 
-		case 6:	//	Дубликат
+		case 6: //  Дубликат
 			SetChars(4, 16, 0, 12, 6, 13, 20);   // "Д", "У", "Б", "Л", "И", "Т", "Ы"
 
 			lcd.setCursor(0, 0);
@@ -1301,7 +1301,7 @@ void proveVoltage() {
 
 }
 
-//	Сдвиг расписаний после удаления расписания внутри
+//  Сдвиг расписаний после удаления расписания внутри
 void shift()
 {
 	for (int k = valArray[0]; k < valArray[1]; k++) {
@@ -1312,7 +1312,7 @@ void shift()
 	SaveTimer(valArray[1]);
 }
 
-//	Выдача информации из EEPROM
+//  Выдача информации из EEPROM
 void viewEEPROM() {
 	valByte = EEPROM.read(numByte);
 
@@ -1328,7 +1328,7 @@ void viewEEPROM() {
 	delay(500);
 }
 
-//	Добавление или изменение расписания по запросу с ПК
+//  Добавление или изменение расписания по запросу с ПК
 void editData(String sender) {
 	if (Serial.available() > 0) {
 		String value;
@@ -1347,7 +1347,7 @@ void editData(String sender) {
 	}
 }
 
-//	Проверка правильности даты
+//  Проверка правильности даты
 bool checkDate()
 {
 	switch (valArray[1])
@@ -1375,7 +1375,7 @@ bool checkDate()
 	}
 }
 
-//	Проверка правильности введённой даты в зависимости от месяца
+//  Проверка правильности введённой даты в зависимости от месяца
 bool checkDay(int count) {
 	if (valArray[0] <= count)
 		return true;
@@ -1412,7 +1412,7 @@ int timeSec(int t1, int t2)
 	return t2 * 60 + t1 * 60 * 60;
 }
 
-//	Переключение режимов в зависимости от задачи с ПК
+//  Переключение режимов в зависимости от задачи с ПК
 int proveSP()
 {
 	if (connectPC) {
