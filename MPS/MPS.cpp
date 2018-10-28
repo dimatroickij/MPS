@@ -574,8 +574,7 @@ void buttonRead(void) {
 		break;
 
 	case 43: //  Меню "Получение данных с ПК"
-		editData("endSave");
-		j = 431;
+		j = editData("endSave", 431);
 		pressedButton = 0;
 		break;
 
@@ -586,8 +585,7 @@ void buttonRead(void) {
 		break;
 
 	case 44:  // Меню "Изменение данных расписания"
-		editData("endEdit");
-		j = 441;
+		j = editData("endEdit", 441);
 		pressedButton = 0;
 		break;
 
@@ -1329,7 +1327,8 @@ void viewEEPROM() {
 }
 
 //  Добавление или изменение расписания по запросу с ПК
-void editData(String sender) {
+int editData(String sender, int m) {
+	int mode = m / 10;
 	if (Serial.available() > 0) {
 		String value;
 		value = Serial.readStringUntil('\n');
@@ -1344,7 +1343,9 @@ void editData(String sender) {
 		SaveTimer(valTimerNum, 6, uint8_t(value.substring(16).toInt()));
 		Serial.println(sender);
 		valTimerNum = 0;
+		mode = m;
 	}
+	return mode;
 }
 
 //  Проверка правильности даты
