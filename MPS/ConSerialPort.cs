@@ -90,24 +90,39 @@ namespace MPS
         }
 
         /// <summary>
-        /// Сохранение данных в ардуино
+        /// Добавление / изменение данных в Ардуино
         /// </summary>
-        /// <param name="str"></param>
+        /// <param name="mode">Номер режима</param>
+        /// <param name="str">Строка, содержащая данные</param>
         /// <returns></returns>
-        public static bool Save(String str)
+        public static bool EditData(int mode, String str)
         {
+            String[][] modeArray = new String[2][];
+            modeArray[0] = new String[3];
+            modeArray[1] = new String[3];
+            modeArray[0][0] = "s";
+            modeArray[0][1] = "endSave";
+            modeArray[0][2] = "Сохранение данных";
+
+            modeArray[1][0] = "e";
+            modeArray[1][1] = "endEdit";
+            modeArray[1][2] = "Изменение данных";
+
             try
             {
-                sp.Write("s");
-                //sp.Write(saveTimer.ToString()  + ":" + str);
-                sp.Write(str);
-                string returnMessage = sp.ReadLine();
+                sp.WriteLine(modeArray[mode][0]);
+                sp.WriteLine(str);
+                sp.WriteLine("f");
+                String returnMessage = sp.ReadLine();
 
-                if (returnMessage.Contains("endSave"))
+                if (returnMessage.Contains(modeArray[mode][1]))
                 {
                     sp.DiscardInBuffer();
                     sp.DiscardOutBuffer();
-                    saveTimer++;
+
+                    if (mode == 0)
+                        saveTimer++;
+
                     return true;
                 }
                 else
@@ -119,49 +134,12 @@ namespace MPS
             }
             catch
             {
-                MessageBox.Show("Устройство не найдено", "Сохранение данных", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Устройство не найдено", modeArray[mode][2], MessageBoxButtons.OK, MessageBoxIcon.Error);
                 sp.DiscardInBuffer();
                 sp.DiscardOutBuffer();
                 return false;
             }
         }
-
-        /// <summary>
-        /// Изменение данных
-        /// </summary>
-        /// <param name="str">Строка, содержащая новые данные</param>
-        /// <returns></returns>
-        public static bool Edit(String str)
-        {
-            try
-            {
-                sp.Write("e");
-                sp.Write(str);
-                string returnMessage = sp.ReadLine();
-
-                if (returnMessage.Contains("endEdit"))
-                {
-                    sp.DiscardInBuffer();
-                    sp.DiscardOutBuffer();
-                    
-                    return true;
-                }
-                else
-                {
-                    sp.DiscardInBuffer();
-                    sp.DiscardOutBuffer();
-                    return false;
-                }
-            }
-            catch
-            {
-                MessageBox.Show("Устройство не найдено", "Сохранение данных", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                sp.DiscardInBuffer();
-                sp.DiscardOutBuffer();
-                return false;
-            }
-        }
-
 
 
         /// <summary>
@@ -201,8 +179,6 @@ namespace MPS
                 return "";
             }
         }
-
-        
 
         public static bool Delete(String str)
         {

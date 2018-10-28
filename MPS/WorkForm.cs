@@ -121,7 +121,7 @@ namespace MPS
                                         );
                                     if (mas2.Count == 0)
                                     {
-                                        if (ConSerialPort.Save(saveRecord.getString()))
+                                        if (ConSerialPort.EditData(0, saveRecord.getString()))
                                         {
                                             MessageBox.Show("Расписание сохранено", "Добавление расписания", MessageBoxButtons.OK, MessageBoxIcon.Information);
                                             records.Add(saveRecord);
@@ -162,7 +162,7 @@ namespace MPS
                                         );
                                     if (mas2.Count == 0)
                                     {
-                                        if (ConSerialPort.Edit(saveRecord.getString()))
+                                        if (ConSerialPort.EditData(1, saveRecord.getString()))
                                         {
                                             MessageBox.Show("Расписание изменено", "Изменение расписания", MessageBoxButtons.OK, MessageBoxIcon.Information);
                                             row.Cells[10].Value = "Изменить";
