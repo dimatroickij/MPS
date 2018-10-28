@@ -110,9 +110,8 @@ namespace MPS
 
             try
             {
-                sp.WriteLine(modeArray[mode][0]);
-                sp.WriteLine(str);
-                sp.WriteLine("f");
+                sp.Write(modeArray[mode][0]);
+                sp.Write(str);
                 String returnMessage = sp.ReadLine();
 
                 if (returnMessage.Contains(modeArray[mode][1]))

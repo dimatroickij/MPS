@@ -55,7 +55,7 @@ bool  connectPC = false;
 uint8_t setChanel[COUNT]; //  Установить: Включённое (1) или выключенное (0) реле
 
 
-LiquidCrystal_I2C lcd(0x27, 16, 2);     //  Объект - lcd для работы с дисплеем (адрес I2C = 0x27, количество столбцов = 16, количество строк = 2)
+LiquidCrystal_I2C lcd(0x27/*0x27*//*0x3f для протеуса*/, 16, 2);     //  Объект - lcd для работы с дисплеем (адрес I2C = 0x27, количество столбцов = 16, количество строк = 2)
 iarduino_RTC    time(RTC_DS1307);     //  Объект - time для работы с часами RTC (тип модуля)
 OneButton buttonBack(14, 1);          //  Объект - кнопка "Назад" (№ пина, )
 OneButton buttonNext(15, 1);          //  Объект - кнопка "Вперёд" (№ пина, )
@@ -1330,23 +1330,21 @@ void viewEEPROM() {
 
 //  Добавление или изменение расписания по запросу с ПК
 void editData(String sender) {
-	while (Serial.read() != 'f') {
-		if (Serial.available() > 0) {
-			String value;
-			value = Serial.readStringUntil('\n');
-			valTimerNum = value.substring(0, 1).toInt();
+	if (Serial.available() > 0) {
+		String value;
+		value = Serial.readStringUntil('\n');
+		valTimerNum = value.substring(0, 1).toInt();
 
-			SaveTimer(valTimerNum, 0, 1);
-			SaveTimer(valTimerNum, 1, uint8_t(value.substring(2, 4).toInt()));
-			SaveTimer(valTimerNum, 2, uint8_t(value.substring(5, 7).toInt()));
-			SaveTimer(valTimerNum, 3, uint8_t(value.substring(8, 10).toInt()));
-			SaveTimer(valTimerNum, 4, uint8_t(value.substring(11, 13).toInt()));
-			SaveTimer(valTimerNum, 5, uint8_t(value.substring(14, 15).toInt()));
-			SaveTimer(valTimerNum, 6, uint8_t(value.substring(16).toInt()));
-		}
+		SaveTimer(valTimerNum, 0, 1);
+		SaveTimer(valTimerNum, 1, uint8_t(value.substring(2, 4).toInt()));
+		SaveTimer(valTimerNum, 2, uint8_t(value.substring(5, 7).toInt()));
+		SaveTimer(valTimerNum, 3, uint8_t(value.substring(8, 10).toInt()));
+		SaveTimer(valTimerNum, 4, uint8_t(value.substring(11, 13).toInt()));
+		SaveTimer(valTimerNum, 5, uint8_t(value.substring(14, 15).toInt()));
+		SaveTimer(valTimerNum, 6, uint8_t(value.substring(16).toInt()));
+		Serial.println(sender);
+		valTimerNum = 0;
 	}
-	Serial.println(sender);
-	valTimerNum = 0;
 }
 
 //  Проверка правильности даты
