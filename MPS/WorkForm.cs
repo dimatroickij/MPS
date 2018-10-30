@@ -246,6 +246,9 @@ namespace MPS
             var z = dataGridView.Rows.Add(now, now.AddMinutes(1), "1", false, false, false, false, false, false, false, "Добавить", "Отменить");
         }
 
+        /// <summary>
+        /// Обработка нажатия на кнопку "Удалить расписание"
+        /// </summary>
         private void deleteButton_Click(object sender, EventArgs e)
         {
             foreach (DataGridViewRow row in dataGridView.Rows)

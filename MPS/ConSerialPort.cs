@@ -10,13 +10,25 @@ namespace MPS
 {
     static class ConSerialPort
     {
+        /// <summary>
+        /// Порт
+        /// </summary>
         static private SerialPort sp = new SerialPort("COM5", 9600);
+        /// <summary>
+        /// Флаг, показывающий состояние подключения Ардуино
+        /// </summary>
         static public bool connected = false;
+        /// <summary>
+        /// Количество расписаний на данный момент
+        /// </summary>
         static public int saveTimer = 0;
+        /// <summary>
+        /// Максимальное количество расписаний
+        /// </summary>
         static public int maxTimers = 0;
 
         /// <summary>
-        /// Констуктор - установка timeout для получения данных от ардуино
+        /// Конструктор - установка timeout для получения данных от ардуино
         /// </summary>
         static ConSerialPort()
         {
@@ -179,6 +191,10 @@ namespace MPS
             }
         }
 
+        /// <summary>
+        /// Удаление данных по запросу с компьютера
+        /// </summary>
+        /// <param name="str">Номер записи</param>
         public static bool Delete(String str)
         {
             try
