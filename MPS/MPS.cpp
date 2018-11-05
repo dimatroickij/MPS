@@ -157,7 +157,6 @@ void buttonRead(void) {
 				j = 41;
 		}
 		flgDisplayUpdate = 1;
-		pressedButton = 0;
 		break;
 
 	case  1:  //  Меню "Таймеры"
@@ -167,7 +166,6 @@ void buttonRead(void) {
 		}
 		if (pressedButton == BACK) { j = 3; }
 		if (pressedButton == NEXT) { j = 2; }
-		pressedButton = 0;
 		break;
 
 	case 11:  //  Меню "Таймеры > сохранённый таймер"
@@ -189,7 +187,6 @@ void buttonRead(void) {
 			}
 			else { j = 12; }
 		}
-		pressedButton = 0;
 		break;
 
 	case 111: //  Меню "Таймеры > сохранённый таймер > Время и канал"
@@ -201,7 +198,6 @@ void buttonRead(void) {
 		}
 		if (pressedButton == BACK) { j = 114; }
 		if (pressedButton == NEXT) { j = 112; }
-		pressedButton = 0;
 		break;
 
 	case 1111:  //  Меню "Таймеры > сохранённый таймер > Время и канал > изменение времени и канала"
@@ -242,7 +238,6 @@ void buttonRead(void) {
 			if (valArray[4] > COUNT) { valArray[4] = 1; }
 		}
 		flgDisplayUpdate = 1;
-		pressedButton = 0;
 		break;
 
 	case 112: //  Меню "Таймеры > сохранённый таймер > Повторы"
@@ -254,7 +249,6 @@ void buttonRead(void) {
 		}
 		if (pressedButton == BACK) { j = 111; }
 		if (pressedButton == NEXT) { j = 113; }
-		pressedButton = 0;
 		break;
 
 	case 1121:  //  Меню "Таймеры > сохранённый таймер > Повторы > изменение повторов"
@@ -291,14 +285,12 @@ void buttonRead(void) {
 			if (valArray[valSubMode]) { valArray[valSubMode] = 0; }
 			else { valArray[valSubMode] = 1; }
 		}
-		pressedButton = 0;
 		break;
 
 	case 113: //  Меню "Таймеры > сохранённый таймер > Стереть таймер"
 		if (pressedButton == OK) { j = 1131; }
 		if (pressedButton == BACK) { j = 112; }
 		if (pressedButton == NEXT) { j = 114; }
-		pressedButton = 0;
 		break;
 
 	case 1131:  //  Меню "Таймеры > сохранённый таймер > Стереть таймер > Таймер удалён"
@@ -320,7 +312,6 @@ void buttonRead(void) {
 		shift();
 
 		delay(2000);
-		pressedButton = 0;
 		break;
 
 	case 114: //  Меню "Таймеры > сохранённый таймер > Выход"
@@ -333,7 +324,6 @@ void buttonRead(void) {
 		}
 		if (pressedButton == BACK) { j = 113; }
 		if (pressedButton == NEXT) { j = 111; }
-		pressedButton = 0;
 		break;
 
 	case 12:  //  Меню "Таймеры > Новый таймер"
@@ -345,7 +335,6 @@ void buttonRead(void) {
 			}
 		}
 		if (pressedButton == NEXT) { j = ReadTimer() ? 13 : 14; } //  Проверка на существование хотя бы одного расписания. Если есть, то открывается меню "Стереть всё".
-		pressedButton = 0;
 		break;
 
 	case 121: //  Меню "Таймеры > Новый таймер > Новый таймер создан"
@@ -364,7 +353,6 @@ void buttonRead(void) {
 		SaveTimer(valTimerNum, 6, 127);
 
 		delay(2000);
-		pressedButton = 0;
 		break;
 
 	case 13:  // Меню "Таймеры > Стереть всё"
@@ -377,14 +365,12 @@ void buttonRead(void) {
 			j = 14;
 			valTimerNum = 0;
 		}
-		pressedButton = 0;
 		break;
 
 	case 131: // Меню "Таймеры > Стереть всё > Все данные стёрты"
 		j = 12;
 		for (valArray[0] = 0; valArray[0] < maxTimers; valArray[0] ++) { SaveTimer(valArray[0]); }
 		delay(2000);
-		pressedButton = 0;
 		break;
 
 	case 14:  // Меню "Таймеры > Выход"
@@ -397,14 +383,12 @@ void buttonRead(void) {
 			j = ReadTimer() ? 11 : (FindTimer() < maxTimers ? 12 : 13); // Проверка на существование хотя бы одного расписания. Если нет, то проверка на переполненность количества расписаний 
 			valTimerNum = 0;
 		}
-		pressedButton = 0;
 		break;
 
 	case  2:  //  Меню "Часы"
 		if (pressedButton == OK) { j = 21; }
 		if (pressedButton == BACK) { j = 1; }
 		if (pressedButton == NEXT) { j = 3; }
-		pressedButton = 0;
 		break;
 
 	case 21:  //  Меню "Часы > Время"
@@ -418,7 +402,6 @@ void buttonRead(void) {
 		}
 		if (pressedButton == BACK) { j = 23; }
 		if (pressedButton == NEXT) { j = 22; }
-		pressedButton = 0;
 		break;
 
 	case 211: //  Меню "Часы > Время > Установка времени"
@@ -443,7 +426,6 @@ void buttonRead(void) {
 			if (valArray[2] > 59) { valArray[2] = 0; }
 		}
 		flgDisplayUpdate = 1;
-		pressedButton = 0;
 		break;
 
 	case 22:  //  Меню "Часы > Дата"
@@ -457,7 +439,6 @@ void buttonRead(void) {
 		}
 		if (pressedButton == BACK) { j = 21; }
 		if (pressedButton == NEXT) { j = 23; }
-		pressedButton = 0;
 		break;
 
 	case 221: //  Меню "Часы > Дата > Установка даты"
@@ -498,14 +479,12 @@ void buttonRead(void) {
 			if (valArray[2] > 99) { valArray[2] = 0; }
 		}
 		flgDisplayUpdate = 1;
-		pressedButton = 0;
 		break;
 
 	case 23:  //  Меню "Часы > Выход"
 		if (pressedButton == OK) { j = 2; }
 		if (pressedButton == BACK) { j = 22; }
 		if (pressedButton == NEXT) { j = 21; }
-		pressedButton = 0;
 		break;
 
 	case  3:  //  Меню "Выход"
@@ -517,7 +496,6 @@ void buttonRead(void) {
 		}
 		if (pressedButton == BACK) { j = 2; }
 		if (pressedButton == NEXT) { j = 1; }
-		pressedButton = 0;
 		break;
 
 	case 4:    //  Меню "Работа с ПК"
@@ -525,7 +503,6 @@ void buttonRead(void) {
 		z = proveSP();
 		if (z != 4)
 			j = z;
-		pressedButton = 0;
 		break;
 
 	case 41: //  Меню "Установка соединения"
@@ -548,13 +525,10 @@ void buttonRead(void) {
 				connectPC = false;
 			}
 		}
-
-		pressedButton = 0;
 		break;
 
 	case 411: //  Меню "Соединение установлено"
 		delay(1000);
-		pressedButton = 0;
 		j = 4;
 		break;
 
@@ -569,29 +543,23 @@ void buttonRead(void) {
 		}
 		Serial.println("endRead");
 		j = 4;
-
-		pressedButton = 0;
 		break;
 
 	case 43: //  Меню "Получение данных с ПК"
 		j = editData("endSave", 431);
-		pressedButton = 0;
 		break;
 
 	case 431: //  Меню "Данные сохранены"
 		delay(1000);
-		pressedButton = 0;
 		j = 4;
 		break;
 
 	case 44:  // Меню "Изменение данных расписания"
 		j = editData("endEdit", 441);
-		pressedButton = 0;
 		break;
 
 	case 441: //  Меню "Данные изменены"
 		delay(1000);
-		pressedButton = 0;
 		j = 4;
 		break;
 
@@ -607,30 +575,25 @@ void buttonRead(void) {
 			Serial.println("endDelete");
 			j = 451;
 		}
-
-		pressedButton = 0;
 		break;
 
 	case 451: //  Меню "Данные удалены"
 		delay(1000);
-		pressedButton = 0;
 		j = 4;
 		break;
 
 	case 5: //  Обработка ошибок
 		delay(1000);
-		pressedButton = 0;
 		j = valSubMode;
 		valSubMode = 0;
 		break;
 
 	case 6: //  Дубликат
 		delay(1000);
-		pressedButton = 0;
 		j = 111;
 		break;
 	}
-
+	pressedButton = 0;
 	//  Изменение текущего состояния на следующее, обновление данных на экране
 	if (j < 4000) {
 		lcd.clear();
@@ -1159,7 +1122,6 @@ void setRelay(void) {
 		uint32_t timeTimerStart = 0;  //  Стартовое время в секундах от 00:00:00 (для цикла)
 		uint32_t timeTimerStop = 0;   //  Конечное время в секундах от 00:00:00 (для цикла)
 		uint8_t  timeWeekday = 0;   //  Текущей день недели в формате: 1 - ПН, 2 - ВТ, 3 - СР, 4 - ЧТ, 5 - ПТ, 6 - СБ, 7 - ВС
-		valArray[0] = valArray[1] = valArray[2] = valArray[3] = 0;
 		timeRTC = (uint32_t)time.Hours * 3600 + time.minutes * 60 + time.seconds;
 		timeWeekday = time.weekday;
 
