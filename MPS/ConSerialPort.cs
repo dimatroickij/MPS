@@ -214,5 +214,24 @@ namespace MPS
                 return false;
             }
         }
+
+        public static bool DeleteAll()
+        {
+            try
+            {
+                sp.Write("h");
+                if (sp.ReadLine().Contains("endDeleteAll"))
+                {
+                    saveTimer = 0;
+                    return true;
+                }
+                else
+                    return false;
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 }

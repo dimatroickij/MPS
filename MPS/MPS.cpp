@@ -582,6 +582,12 @@ void buttonRead(void) {
 		j = 4;
 		break;
 
+	case 46:  // Меню "Удаление всех расписаний"
+		j = 4;
+		for (valArray[0] = 0; valArray[0] < maxTimers; valArray[0] ++) { SaveTimer(valArray[0]); }
+		delay(2000);
+		break;
+
 	case 5: //  Обработка ошибок
 		delay(1000);
 		j = valSubMode;
@@ -1086,6 +1092,16 @@ void displayUpdate() {
 			lcd.print(F("    \3\1A\4EH\2     "));
 			break;
 
+		case 46: // Меню "Таймеры > Стереть всё > Все данные стёрты"
+			SetChars(20, 8, 4, 16, 12); //  "Ы", "Й", "Д", "У", "Л"
+
+			lcd.setCursor(2, 0);
+			lcd.print(F("BCE TA\2MEP\1"));
+
+			lcd.setCursor(4, 1);
+			lcd.print(F("\4\3A\5EH\1"));
+			break;
+
 		case 5: //  Обработка ошибок
 			SetChars(4, 20);   // "Д", "Ы"
 
@@ -1407,6 +1423,9 @@ int proveSP()
 		case 'd':
 			return 45;
 			break;
+
+		case 'h':
+			return 46;
 
 		default:
 			return 4;

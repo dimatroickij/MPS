@@ -251,11 +251,10 @@ namespace MPS
         /// </summary>
         private void deleteButton_Click(object sender, EventArgs e)
         {
-            foreach (DataGridViewRow row in dataGridView.Rows)
+            ConSerialPort.DeleteAll();
+            while (dataGridView.Rows.Count > 0)
             {
-                ConSerialPort.Delete(row.Index.ToString());
-                dataGridView.Rows.Remove(row);
-                Thread.Sleep(1000);
+                dataGridView.Rows.RemoveAt(0);
             }
             records.RemoveAll(rec => rec.NumTimer != 150);
             deleteButton.Enabled = false;
